@@ -3,4 +3,4 @@ project(AddressBook_C C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(AddressBook_C main.c)
+add_executable(AddressBook_C main.c Model/UserData.h View/UserInterface.h)
