@@ -12,7 +12,8 @@ void PrintAllData();
 int main()
 {
 
-    printf("%ld\n", sizeof(UserDataNode));
+    //printf("%ld\n", sizeof(UserDataNode));
+    //printf("%ld\n", sizeof(wchar_t));
 
     //UserDataNode type을 요소로 갖는 length 5 배열
     //=> UserDataNode를 배열로 관리
@@ -41,14 +42,16 @@ int main()
         printf("이름을 입력하시오 : ");
         fgets(aryTemp, SIZE_OF_TEMP_BUFFER, stdin);
         aryBuffer[0] = aryTemp;
-        aryLength[0] = strlen(aryBuffer);
+        //aryLength[0] = strlen(aryBuffer);
+        aryLength[0] = GetByteOfAry(*aryBuffer);
 
         //전화번호 입력받기
         printf("전화번호를 입력하시오 : ");
         fgets(aryTemp+(aryLength[0]+2), SIZE_OF_TEMP_BUFFER, stdin);
         //fgets(aryTemp, SIZE_OF_TEMP_BUFFER, stdin);
-        aryBuffer[1] = aryTemp+(aryLength[0]+2);
-        aryLength[1] = strlen(aryBuffer+1);
+        aryBuffer[1] = aryTemp+(aryLength[0]+1);
+        //aryLength[1] = strlen(aryBuffer+1);
+        aryLength[1] = GetByteOfAry(*(aryBuffer+1));
 
         //버퍼에 남은 찌꺼기 비우기
         CleanStdinBuffer();
