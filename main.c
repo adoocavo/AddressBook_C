@@ -11,15 +11,19 @@ void PrintAllData();
 
 int main()
 {
-    FILE* fp = stdin;
+
+/*
+    //FILE* fp = stdin;
     //printf("%ld\n", sizeof(UserDataNode));
     //printf("%ld\n", sizeof(wchar_t));
+*/
 
     //UserDataNode type을 요소로 갖는 length 5 배열
     //=> UserDataNode를 배열로 관리
     UserDataNode list[N] = {};
 
-    //배열의 요소들을 Linked List로 만듦
+    //연결 리스트 구조화
+    // 배열의 요소들을 Linked List로 만듦
     //=> Linked List로 Data 나열
     int i;
     for(i = 0; i < N-1; ++i)
@@ -63,7 +67,27 @@ int main()
         list[i].strData.name = (char *) malloc(nLength + 1);
         strncmp(list[i].strData.name, chTemp, nLength + 1);
         */
-
     }
+
+    // 저장된 이름/번호 출력하기
+    //=> 포인터의 관계를 이용한 Node 접근
+    //=> 연결 리스트의 연결 구조가 바뀌면 리스트 순서가 바뀐다
+    UserDataNode* pTemp = list;
+    while(pTemp != NULL)
+    {
+        /*
+        // 값으로 접근
+        printf("%s", (*pTemp).strData.name);
+        printf("%s", (*pTemp).strData.phoneNumber);
+
+        pTemp = (*pTemp).pnNext;
+        */
+        //주소로 접근 --> pTemp가 아닌 pTemp의 값이 연산에 참여
+        printf("%p : %s", pTemp, pTemp->strData.name);
+        printf("%p : %s", pTemp, pTemp->strData.phoneNumber);
+
+        pTemp = pTemp->pnNext;          //단일 연결리스트스러운 code
+    }
+
 
 }
