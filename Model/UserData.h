@@ -21,19 +21,20 @@ typedef struct UserDataNode
 } UserDataNode;
 
 //관리 구조 체계2 - Node Data를 utilize 하는 함수
-static inline void AddData(struct UserDataNode* list, const char* pszParam,
+static inline void AddData(struct UserDataNode* list, const char* *pszParam,
         const unsigned long* pnLength)
 {
     //1. 이름 입력받은 크기만큼 동적할당 + copy
     list->strData.name = (char *) malloc(pnLength[0] + 1);
-    strncpy(list->strData.name, pszParam, pnLength[0] + 1);
+    strncpy(list->strData.name, *pszParam, pnLength[0] + 1);
 
     //2. 전화번호 입력받은 크기만큼 동적할당 + copy
     list->strData.phoneNumber = (char *) malloc(pnLength[1] + 1);
-    strncpy(list->strData.phoneNumber, pszParam+1, pnLength[1] + 1);
+    strncpy(list->strData.phoneNumber, *(pszParam+1), pnLength[1] + 1);
 
 }
 
+/*
 //입력된 문자열의 바이트 수 구하는 함수 구현
 static inline int GetByteOfAry(const char* aryBuffer)
 {
@@ -49,7 +50,7 @@ static inline int GetByteOfAry(const char* aryBuffer)
     return nCount;
 
 }
-
+*/
 
 void GarbageCollector(struct UserDataNode* list)
 {

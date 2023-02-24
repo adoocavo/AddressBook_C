@@ -11,7 +11,7 @@ void PrintAllData();
 
 int main()
 {
-
+    FILE* fp = stdin;
     //printf("%ld\n", sizeof(UserDataNode));
     //printf("%ld\n", sizeof(wchar_t));
 
@@ -33,28 +33,29 @@ int main()
     char* aryBuffer[NUM_OF_ITEMS] = {};
     unsigned long aryLength[NUM_OF_ITEMS] = {};
     char aryTemp[SIZE_OF_TEMP_BUFFER] = {};
+
+    // 이름/번호 입력받기
     for(i=0; i<N; ++i)
     {
         //입력받은 한글/영어 문자열 길이? 크기 구분해서 44line오류 고치기
-
 
         //이름 입력받기
         printf("이름을 입력하시오 : ");
         fgets(aryTemp, SIZE_OF_TEMP_BUFFER, stdin);
         aryBuffer[0] = aryTemp;
-        //aryLength[0] = strlen(aryBuffer);
-        aryLength[0] = GetByteOfAry(*aryBuffer);
+        aryLength[0] = strlen(*aryBuffer);
+        //aryLength[0] = GetByteOfAry(*aryBuffer);
 
         //전화번호 입력받기
         printf("전화번호를 입력하시오 : ");
-        fgets(aryTemp+(aryLength[0]+2), SIZE_OF_TEMP_BUFFER, stdin);
+        fgets(aryTemp+(aryLength[0]+1), SIZE_OF_TEMP_BUFFER, stdin);
         //fgets(aryTemp, SIZE_OF_TEMP_BUFFER, stdin);
         aryBuffer[1] = aryTemp+(aryLength[0]+1);
-        //aryLength[1] = strlen(aryBuffer+1);
-        aryLength[1] = GetByteOfAry(*(aryBuffer+1));
+        aryLength[1] = strlen(*(aryBuffer+1));
+        //aryLength[1] = GetByteOfAry(*(aryBuffer+1));
 
         //버퍼에 남은 찌꺼기 비우기
-        CleanStdinBuffer();
+        //CleanStdinBuffer();
 
         //입력받은 크기만큼 동적할당 + copy
         AddData(list+i, aryBuffer, aryLength);

@@ -3,9 +3,9 @@
 //
 #ifndef ADDRESSBOOK_C_USERINTERFACE_H
 #define ADDRESSBOOK_C_USERINTERFACE_H
-static inline CleanStdinBuffer()
+static inline void CleanStdinBuffer()
 {
- while(getchar() != '\n') {;}
+    while(getchar() != '\n') {;}
 }
 
 #endif //ADDRESSBOOK_C_USERINTERFACE_H
