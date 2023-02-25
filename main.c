@@ -17,11 +17,13 @@ int main()
     //printf("%ld\n", sizeof(UserDataNode));
     //printf("%ld\n", sizeof(wchar_t));
 */
+     UserDataNode* pHead = NULL;
 
+/*
     //UserDataNode type을 요소로 갖는 length 5 배열
     //=> UserDataNode를 배열로 관리
     UserDataNode list[N] = {};
-
+*/
     //연결 리스트 구조화
     // 배열의 요소들을 Linked List로 만듦
     //=> Linked List로 Data 나열
