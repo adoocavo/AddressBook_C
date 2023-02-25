@@ -20,41 +20,17 @@ typedef struct UserDataNode
     struct UserDataNode* pnNext;
 } UserDataNode;
 
-//관리 구조 체계2 - Node Data를 utilize 하는 함수
-static inline void AddData(struct UserDataNode* list, const char* *pszParam,
-        const unsigned long* pnLength)
-{
-    //1. 이름 입력받은 크기만큼 동적할당 + copy
-    list->strData.name = (char *) malloc(pnLength[0] + 1);
-    strncpy(list->strData.name, *pszParam, pnLength[0] + 1);
 
-    //2. 전화번호 입력받은 크기만큼 동적할당 + copy
-    list->strData.phoneNumber = (char *) malloc(pnLength[1] + 1);
-    strncpy(list->strData.phoneNumber, *(pszParam+1), pnLength[1] + 1);
+//전체 연결 리스트 관리하는 포인터 변수
+UserDataNode* g_pHead;
 
-}
+//Node에 동적할당 하여 name, phoneNumber 저장하는 함수
+void AddData(UserDataNode*, const char**);
 
-/*
-//입력된 문자열의 바이트 수 구하는 함수 구현
-static inline int GetByteOfAry(const char* aryBuffer)
-{
-    int i = 0;
-    int nCount = 0;
 
-    while(aryBuffer[i] != '\0')
-    {
-        ++nCount;
-        ++i;
-    }
+// 연결 리스트 테스트 Code - 관리 Code
+//1. 전체 List 출력 함수
+void PrintAllList();
 
-    return nCount;
-
-}
-*/
-
-void GarbageCollector(struct UserDataNode* list)
-{
-    ;
-}
-void SearchData(UserDataNode*);
-void DeleteData(UserDataNode*);
+//2. 새로운 Node 추가 함수
+const int InsertNewNode_first(const char**);
