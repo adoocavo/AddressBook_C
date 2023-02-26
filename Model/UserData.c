@@ -25,8 +25,8 @@ void PrintAllList()
     //while(pNode->pnNext != NULL)
     while(pNode != NULL)
     {
-            printf("[%p] %s, next[%p]", pNode, pNode->strData.name, pNode->pnNext);
-            printf("[%p] %s, next[%p]", pNode, pNode->strData.phoneNumber, pNode->pnNext);
+            printf("[%p] %s\b, next[%p]", pNode, pNode->strData.name, pNode->pnNext);
+            printf("[%p] %s\b, next[%p]", pNode, pNode->strData.phoneNumber, pNode->pnNext);
 
             pNode = pNode->pnNext;
 
@@ -100,6 +100,29 @@ const int InsertNewNode_first(const char* *pszParam)
 
     return 0;
 }
+
+
+
+//3. 전체 리스트 삭제 함수(동적할당 해제)
+void ReleaseAllList()
+{
+    UserDataNode *pDelete = g_pHead;
+    UserDataNode *pTemp = NULL;
+
+    while(pDelete != NULL)
+    {
+        printf("Delete : [%p] %s\b, next[%p]", pDelete, pDelete->strData.name, pDelete->pnNext);
+        printf("Delete : [%p] %s\b, next[%p]", pDelete, pDelete->strData.phoneNumber, pDelete->pnNext);
+        pTemp = pDelete->pnNext;
+
+        free(pDelete->strData.name);
+        free(pDelete->strData.phoneNumber);
+        free(pDelete);
+
+        pDelete = pTemp;
+    }
+}
+
 
 
 
