@@ -16,12 +16,20 @@ void PrintAllList()
 {
     UserDataNode* pNode = g_pHead;
 
-    while(pNode->pnNext != NULL)
+    //Node 유효성 검사
+    if(pNode == NULL)
     {
-        printf("[%p] %s, next[%p]", pNode, pNode->strData.name, pNode->pnNext);
-        printf("[%p] %s, next[%p]", pNode, pNode->strData.phoneNumber, pNode->pnNext);
+        return;
+    }
 
-        pNode = pNode->pnNext;
+    //while(pNode->pnNext != NULL)
+    while(pNode != NULL)
+    {
+            printf("[%p] %s, next[%p]", pNode, pNode->strData.name, pNode->pnNext);
+            printf("[%p] %s, next[%p]", pNode, pNode->strData.phoneNumber, pNode->pnNext);
+
+            pNode = pNode->pnNext;
+
     }
 }
 
@@ -89,14 +97,16 @@ const int InsertNewNode_first(const char* *pszParam)
         g_pHead = pNode;
         AddData(pNode, pszParam);
     }
+
+    return 0;
 }
 
 
 
 void AddData(UserDataNode* pNode, const char* *pszParam)
 {
-    const int nLength_name = strlen(*pszParam);
-    const int nLength_phoneNumber = strlen(*(pszParam+1));
+    const unsigned long nLength_name = strlen(*pszParam);
+    const unsigned long nLength_phoneNumber = strlen(*(pszParam+1));
 
     //이름, 번호 저장할 메모리 동적할당
     pNode->strData.name = (char*)malloc(nLength_name+1);
