@@ -25,8 +25,8 @@ void PrintAllList()
     //while(pNode->pnNext != NULL)
     while(pNode != NULL)
     {
-            printf("[%p] %s\b, next[%p]", pNode, pNode->strData.name, pNode->pnNext);
-            printf("[%p] %s\b, next[%p]", pNode, pNode->strData.phoneNumber, pNode->pnNext);
+            printf("[%p] %s, next[%p]\n", pNode, pNode->strData.name, pNode->pnNext);
+            printf("[%p] %s, next[%p]\n", pNode, pNode->strData.phoneNumber, pNode->pnNext);
 
             pNode = pNode->pnNext;
 
@@ -111,8 +111,8 @@ void ReleaseAllList()
 
     while(pDelete != NULL)
     {
-        printf("Delete : [%p] %s\b, next[%p]", pDelete, pDelete->strData.name, pDelete->pnNext);
-        printf("Delete : [%p] %s\b, next[%p]", pDelete, pDelete->strData.phoneNumber, pDelete->pnNext);
+        printf("Delete : [%p] %s, next[%p]\n", pDelete, pDelete->strData.name, pDelete->pnNext);
+        printf("Delete : [%p] %s, next[%p]\n", pDelete, pDelete->strData.phoneNumber, pDelete->pnNext);
         pTemp = pDelete->pnNext;
 
         free(pDelete->strData.name);
