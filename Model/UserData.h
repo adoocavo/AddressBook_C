@@ -25,6 +25,9 @@ typedef struct UserDataNode
 //=> 주의: 항상 1st Node를 가리켜야함
 UserDataNode* g_pHead;
 
+//전체 연결 리스트 관리하는 Dummy head Node
+UserDataNode g_DummyNode;
+
 //Node에 동적할당 하여 name, phoneNumber 저장하는 함수
 void AddData(UserDataNode*, const char**);
 
@@ -38,4 +41,10 @@ const int InsertNewNode_first(const char**);
 
 //3. 전체 List 삭제 함수
 void ReleaseAllList();
+
+//3_1.특정 Node 검색 함수
+UserDataNode* SearchNode(const char**);
+
+//3_2. 특정 Node 삭제 함수
+const int DeleteNode(const char**);
 
