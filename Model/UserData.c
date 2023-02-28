@@ -46,7 +46,7 @@ void PrintAllList()
 //=> Data 추가 실패/성공 확인 위해 return const int
 //  --> 성공 1, 실패 0
 //=> User 측 에서는 입력할 Data만 입력하게 만들기(내부기능 고려X)
-const int InsertNewNode_first(const char* *pszParam)
+const int InsertNewNode_Head(const char* *pszParam)
 {
     /* => InsertNewNode_end
     if(*pszParam == NULL || *(pszParam+1) == NULL)
@@ -95,9 +95,9 @@ const int InsertNewNode_first(const char* *pszParam)
 
     //2. Node 저장할 위치 검색
     //if(g_pHead == NULL)              //Using pHead
-    if(g_DummyNode.pnNext == NULL) //Using Dummy Node
+    //if(g_DummyNode.pnNext == NULL)   //Using Dummy Node
+    if(IsEmpty() == 1)
     {
-
         //Using Dummy Node
         g_DummyNode.pnNext = pNode;
         AddData(pNode, pszParam);
@@ -110,7 +110,6 @@ const int InsertNewNode_first(const char* *pszParam)
 
     else
     {
-
         //Using DummyNode
         pNode->pnNext = g_DummyNode.pnNext;
         g_DummyNode.pnNext = pNode;
@@ -123,6 +122,46 @@ const int InsertNewNode_first(const char* *pszParam)
         */
      }
 
+    return 1;
+}
+
+//2_1. 새로운 Node 추가 함수
+//=> Tail Node로 삽입
+// return 1: 성공, return 0: 실패
+const int InsertNewNode_Tail(const char** pszParam)
+{
+    //param 유효성 검사
+    if(*pszParam == NULL || *(pszParam+1) == NULL)
+    {
+        return 0;
+    }
+
+    //Node 생성
+    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
+    memset(pNode, 0, sizeof(UserDataNode));
+    UserDataNode *pSearch = NULL;               //Tail Node 위치 저장
+
+    //branch1 - Dummy Node가 NULL 포인팅
+    //=> 입력받은 Data를 Dummy Node 다음 위치에 추가
+    if(IsEmpty() == 1)
+    {
+        g_DummyNode.pnNext = pNode;
+        AddData(pNode, pszParam);
+    }
+
+    //branch2 - List가 비어있지 않은 상태
+    //=> 입력받은 Data를 Tail Node 다음 위치에 추가
+    else
+    {
+        //Tail Node 주소 찾기
+        pSearch = SearchTail();
+
+        //Tail Node 다음 위치에 Node 추가
+        pSearch->pnNext = pNode;
+
+        //새롭게 추가한 Node에 Data 저장
+        AddData(pNode, pszParam);
+    }
     return 1;
 }
 
@@ -148,15 +187,22 @@ void ReleaseAllList()
 
         free(pDelete->strData.name);
         free(pDelete->strData.phoneNumber);
-        free(pDelete);
+        pDelete->strData.name = NULL;
+        pDelete->strData.phoneNumber = NULL;
 
+        free(pDelete);
         pDelete = pTemp;
     }
+    pDelete = NULL;
+
+    //핵중요! : List의 모든 Node가 할당 해제 된 이루에 Dummy Head Node는 NULL을 가리켜야함!
+    g_DummyNode.pnNext = NULL;
 }
 
-//3_1. 특정 Node 검색 함수
-// => Dummy Node사용
+//3_1. 특정 Node 검색 함수 for 삭제
+//=> Dummy Node사용
 //=> call back 되는 함수
+//=> 찾고자 하는 대상 Node의 직전 Node 주소 return ()
 UserDataNode* SearchNode(const char* *pszParam)
 {
     UserDataNode *pSearch = &g_DummyNode;
@@ -226,8 +272,8 @@ const int DeleteNode(const char* *pszParam)
         return 0;
     }
 
-    UserDataNode *pSearch = SearchNode(pszParam);
-    UserDataNode *pTemp = NULL;
+    UserDataNode *pSearch = SearchNode(pszParam);        //삭제 대상 Node의 앞쪽 Node 주소 return
+    UserDataNode *pTarget = NULL;                        //삭제 대상 Node 주소 임시저장
 
     if(pSearch == NULL)
     {
@@ -236,16 +282,19 @@ const int DeleteNode(const char* *pszParam)
 
     //검색 결과로 받은 Node삭제
     //1. 삭제 대상 Node의 주소 임시 저장
-    pTemp = pSearch->pnNext;
+    pTarget = pSearch->pnNext;
 
     //2. 삭제 대상 Node의 앞쪽 Node와 뒤쪽 Node 연결
     pSearch->pnNext = pSearch->pnNext->pnNext;
 
     //3. 삭제 대상 Node 삭제하기
-    free(pTemp->strData.name);
-    free(pTemp->strData.phoneNumber);
-    free(pTemp);
-    pTemp = NULL;
+    free(pTarget->strData.name);
+    free(pTarget->strData.phoneNumber);
+    pTarget->strData.name = NULL;
+    pTarget->strData.phoneNumber = NULL;
+
+    free(pTarget);
+    pTarget = NULL;
 
     return 1;
 }
@@ -325,4 +374,24 @@ const int IsEmpty()
     }
     return 0;
 }
+
+//Tail Node의 주소 return 함수
+//Single Linked List의 비효율성이 나타나는 함수
+//  => Tail Node를 찾기 위해 전체 Node의 개수만큼 loop 돈다
+//      --> List 전체 크기가 증가할수록 탐색 시간 증가
+//=> Tail Dummy Node 를 만들어서 역방향으로의 link도 생성 --> Double Linked List
+UserDataNode* SearchTail()
+{
+    //새로운 Node를 연결시킬 직전 Node 검색(마지막 Node 검색)
+    UserDataNode *pSearch = &g_DummyNode;
+
+    //while(pSearch->pnNext == NULL)       //=> 실수 주의
+    while(pSearch->pnNext != NULL)
+    {
+        pSearch = pSearch->pnNext;
+    }
+
+    return pSearch;
+}
+
 #endif

@@ -1,7 +1,8 @@
 //
 // Created by KHANG JU CHOI on 2023/02/21.
 //
-#pragma once
+#ifndef ADDRESSBOOK_C_USERDATA_H
+#define ADDRESSBOOK_C_USERDATA_H
 
 //Node 제작 - Node에 저장할 Data
 typedef struct UserData
@@ -28,21 +29,22 @@ UserDataNode* g_pHead;
 //전체 연결 리스트 관리하는 Dummy head Node
 UserDataNode g_DummyNode;
 
-//Node에 동적할당 하여 name, phoneNumber 저장하는 함수
-void AddData(UserDataNode*, const char**);
-
 
 // 연결 리스트 테스트 Code - 관리 Code
 //1. 전체 List 출력 함수
 void PrintAllList();
 
-//2. 새로운 Node 추가 함수
-const int InsertNewNode_first(const char**);
+//2. 새로운 Node 추가 함수 - At Head
+const int InsertNewNode_Head(const char**);
+
+//2_1. 새로운 Node 추가 함수 - At Tail
+const int InsertNewNode_Tail(const char**);
+
 
 //3. 전체 List 삭제 함수
 void ReleaseAllList();
 
-//3_1.특정 Node 검색 함수
+//3_1.특정 Node 검색 함수 for 삭제
 UserDataNode* SearchNode(const char**);
 
 //3_2. 특정 Node 삭제 함수
@@ -52,3 +54,10 @@ const int DeleteNode(const char**);
 //4. 전체 비어있는 Node인지 확인(Dummy Node가 NULL 포인팅 하는지)
 const int IsEmpty();
 
+//5. 마지막(Tail) Node의 주소 return
+UserDataNode* SearchTail();
+
+//6. Node에 동적할당 하여 name, phoneNumber 저장하는 함수
+void AddData(UserDataNode*, const char**);
+
+#endif

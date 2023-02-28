@@ -30,7 +30,7 @@ int main()
             case 1:
                 //Data 입력받기 - InsertNewNode_first
                 InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertNewNode_first(aryBuffer);
+                InsertNewNode_Head(aryBuffer);
                 break;
 
 
@@ -49,6 +49,13 @@ int main()
                 //전체 List 출력하기
                 PrintAllList();
                 break;
+
+            case 5:
+                //Data 입력받기 - InsertNewNode_Tail
+                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
+                InsertNewNode_Tail(aryBuffer);
+                break;
+
 
             default:
                 break;
