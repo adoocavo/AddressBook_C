@@ -9,19 +9,20 @@
 #include<stdio.h>
 
 //extern UserDataNode* g_pHead;
-extern UserDataNode g_DummyNode;
+//extern UserDataNode g_DummyNode;
 
 //1. 전체 리스트 출력 함수
 //=> 1st Node 가리키는 전역 포인터 변수 사용
 void PrintAllList()
 {
-    /*
+
     //Using pHead
     UserDataNode* pNode = g_pHead;
-    */
+
+    /*
     //Using DummyNode
     UserDataNode* pNode = g_DummyNode.pnNext;
-
+    */
     //Node 유효성 검사
     if(pNode == NULL)
     {
@@ -92,32 +93,34 @@ const int InsertNewNode_first(const char* *pszParam)
     memset(pNode, 0, sizeof(UserDataNode));
 
     //2. Node 저장할 위치 검색
-    if(g_DummyNode.pnNext == NULL)
+    //if(g_DummyNode.pnNext == NULL) //Using Dummy Node
+    if(g_pHead == NULL)              //Using pHead
     {
+        /*
         //Using Dummy Node
         g_DummyNode.pnNext = pNode;
         AddData(pNode, pszParam);
+        */
 
-        /*
         //Using pHead
         g_pHead = pNode;
         AddData(pNode, pszParam);
-        */
+
      }
 
     else
     {
-
+        /*
         //Using DummyNode
         pNode->pnNext = g_DummyNode.pnNext;
         g_DummyNode.pnNext = pNode;
         AddData(pNode, pszParam);
-        /*
+        */
+
         //Using pHead
         pNode->pnNext = g_pHead;
         g_pHead = pNode;
         AddData(pNode, pszParam);
-         */
     }
 
     return 1;
@@ -128,12 +131,13 @@ const int InsertNewNode_first(const char* *pszParam)
 //3. 전체 리스트 삭제 함수(동적할당 해제)
 void ReleaseAllList()
 {
+    /*
     //Using DummyNode
     UserDataNode *pDelete = g_DummyNode.pnNext;
-    /*
+    */
     //Using pHead
     UserDataNode *pDelete = g_pHead;
-    */
+
     UserDataNode *pTemp = NULL;
 
     while(pDelete != NULL)
@@ -149,8 +153,10 @@ void ReleaseAllList()
         pDelete = pTemp;
     }
 }
-
+/*
 //3_1. 특정 Node 검색 함수
+// => Dummy Node사용
+//=> call back 되는 함수
 UserDataNode* SearchNode(const char* *pszParam)
 {
     UserDataNode *pSearch = &g_DummyNode;
@@ -175,8 +181,44 @@ UserDataNode* SearchNode(const char* *pszParam)
 
     return NULL;
 }
+*/
 
+//3_1. 특정 Node 검색 함수
+//=> pHead 사용
+//=> call back 되는 함수
+UserDataNode* SearchNode(const char* *pszParam)
+{
+    UserDataNode *pSearch = g_pHead;     //Search 대상 Node
+    UserDataNode *pTemp = pSearch;          //Search 대상 Node의 직전 Node
+
+    if(pSearch == NULL)
+    {
+        return NULL;
+    }
+
+    const unsigned long nLength_name = strlen(*pszParam);
+    const unsigned long nLength_phoneNumber = strlen(*(pszParam+1));
+
+
+    while (pSearch != NULL)
+    {
+        if (strncmp(pSearch->strData.name, *pszParam, nLength_name + 1) == 0
+            && strncmp(pSearch->strData.phoneNumber, *(pszParam + 1), nLength_phoneNumber + 1) == 0)
+        {
+            return pTemp;
+        }
+
+        pTemp = pSearch;
+        pSearch = pSearch->pnNext;
+
+    }
+
+    return NULL;
+}
+
+/*
 //3_2. 특정 Node 삭제 함수
+//=> Dummy Node 사용
 const int DeleteNode(const char* *pszParam)
 {
     if(pszParam == NULL)
@@ -207,6 +249,57 @@ const int DeleteNode(const char* *pszParam)
 
     return 1;
 }
+*/
+//3_2. 특정 Node 삭제 함수
+//=> pHead 사용
+const int DeleteNode(const char* *pszParam)
+{
+    if(pszParam == NULL)
+    {
+        return 0;
+    }
+
+    UserDataNode *pSearch = SearchNode(pszParam);    //삭제 대상 Node의 직전 Node
+    UserDataNode *pTemp = NULL;                      //삭제 대상 Node 임시 저장
+
+    if(pSearch == NULL)
+    {
+        return 0;
+    }
+
+    //branch1 맨 앞쪽 Node를 삭제하는 경우 - Node 검색 결과가 g_pHead가 가리키는 Node인 경우
+    if(pSearch == g_pHead)
+    {
+        //1. 삭제 대상 Node 주소 임시 저장
+        pTemp = pSearch;
+
+        //2. 삭제 대상 Node의 앞쪽 Node(g_pHead)와 뒤쪽 Node 연결
+        g_pHead = pTemp->pnNext;
+    }
+
+    //branch2 중간, 맨 끝 Node를 삭제하는 경우
+    else
+    {
+        //검색 결과로 받은 Node삭제
+        //1. 삭제 대상 Node의 주소 임시 저장
+        pTemp = pSearch->pnNext;
+
+        //2. 삭제 대상 Node의 앞쪽 Node와 뒤쪽 Node 연결
+        pSearch->pnNext = pSearch->pnNext->pnNext;
+    }
+
+    //3. 삭제 대상 Node 삭제하기
+    free(pTemp->strData.name);
+    free(pTemp->strData.phoneNumber);
+    pTemp->strData.name = NULL;
+    pTemp->strData.phoneNumber = NULL;
+
+    free(pTemp);
+    pTemp = NULL;
+
+    return 1;
+}
+
 
 void AddData(UserDataNode* pNode, const char* *pszParam)
 {
