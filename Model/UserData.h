@@ -48,3 +48,7 @@ UserDataNode* SearchNode(const char**);
 //3_2. 특정 Node 삭제 함수
 const int DeleteNode(const char**);
 
+
+//4. 전체 비어있는 Node인지 확인(Dummy Node가 NULL 포인팅 하는지)
+const int IsEmpty();
+

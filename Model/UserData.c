@@ -9,20 +9,21 @@
 #include<stdio.h>
 
 //extern UserDataNode* g_pHead;
-//extern UserDataNode g_DummyNode;
+//extern UserDataNode g_DummyNode;  //=> Node type 자체로 선언 or 포인터로 선언 후 동적할당
+
 
 //1. 전체 리스트 출력 함수
 //=> 1st Node 가리키는 전역 포인터 변수 사용
 void PrintAllList()
 {
-
+    /*
     //Using pHead
     UserDataNode* pNode = g_pHead;
+    */
 
-    /*
     //Using DummyNode
     UserDataNode* pNode = g_DummyNode.pnNext;
-    */
+
     //Node 유효성 검사
     if(pNode == NULL)
     {
@@ -93,35 +94,34 @@ const int InsertNewNode_first(const char* *pszParam)
     memset(pNode, 0, sizeof(UserDataNode));
 
     //2. Node 저장할 위치 검색
-    //if(g_DummyNode.pnNext == NULL) //Using Dummy Node
-    if(g_pHead == NULL)              //Using pHead
+    //if(g_pHead == NULL)              //Using pHead
+    if(g_DummyNode.pnNext == NULL) //Using Dummy Node
     {
-        /*
+
         //Using Dummy Node
         g_DummyNode.pnNext = pNode;
         AddData(pNode, pszParam);
-        */
-
+        /*
         //Using pHead
         g_pHead = pNode;
         AddData(pNode, pszParam);
-
+        */
      }
 
     else
     {
-        /*
+
         //Using DummyNode
         pNode->pnNext = g_DummyNode.pnNext;
         g_DummyNode.pnNext = pNode;
         AddData(pNode, pszParam);
-        */
-
+        /*
         //Using pHead
         pNode->pnNext = g_pHead;
         g_pHead = pNode;
         AddData(pNode, pszParam);
-    }
+        */
+     }
 
     return 1;
 }
@@ -131,13 +131,13 @@ const int InsertNewNode_first(const char* *pszParam)
 //3. 전체 리스트 삭제 함수(동적할당 해제)
 void ReleaseAllList()
 {
-    /*
+
     //Using DummyNode
     UserDataNode *pDelete = g_DummyNode.pnNext;
-    */
+    /*
     //Using pHead
     UserDataNode *pDelete = g_pHead;
-
+    */
     UserDataNode *pTemp = NULL;
 
     while(pDelete != NULL)
@@ -153,7 +153,7 @@ void ReleaseAllList()
         pDelete = pTemp;
     }
 }
-/*
+
 //3_1. 특정 Node 검색 함수
 // => Dummy Node사용
 //=> call back 되는 함수
@@ -181,8 +181,8 @@ UserDataNode* SearchNode(const char* *pszParam)
 
     return NULL;
 }
-*/
 
+/*
 //3_1. 특정 Node 검색 함수
 //=> pHead 사용
 //=> call back 되는 함수
@@ -215,8 +215,8 @@ UserDataNode* SearchNode(const char* *pszParam)
 
     return NULL;
 }
+*/
 
-/*
 //3_2. 특정 Node 삭제 함수
 //=> Dummy Node 사용
 const int DeleteNode(const char* *pszParam)
@@ -249,7 +249,9 @@ const int DeleteNode(const char* *pszParam)
 
     return 1;
 }
-*/
+
+
+/*
 //3_2. 특정 Node 삭제 함수
 //=> pHead 사용
 const int DeleteNode(const char* *pszParam)
@@ -299,7 +301,7 @@ const int DeleteNode(const char* *pszParam)
 
     return 1;
 }
-
+*/
 
 void AddData(UserDataNode* pNode, const char* *pszParam)
 {
@@ -312,5 +314,15 @@ void AddData(UserDataNode* pNode, const char* *pszParam)
 
     pNode->strData.phoneNumber = (char*)malloc(nLength_phoneNumber+1);
     strncpy(pNode->strData.phoneNumber, *(pszParam+1), nLength_phoneNumber+1);
+}
+
+const int IsEmpty()
+{
+    //Dummy Node가 NULL을 포인팅 하는지 여부로 판단
+    if(g_DummyNode.pnNext == NULL)
+    {
+        return 1;
+    }
+    return 0;
 }
 #endif
