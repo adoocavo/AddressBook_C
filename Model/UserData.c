@@ -89,9 +89,10 @@ const int InsertNewNode_Head(const char* *pszParam)
         return 0;
     }
 
-    //1. Node 생성
+    //1. Node 생성 + 입략받은 Data 저장
     UserDataNode* pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
     memset(pNode, 0, sizeof(UserDataNode));
+    AddData(pNode, pszParam);
 
     //2. Node 저장할 위치 검색
     //if(g_pHead == NULL)              //Using pHead
@@ -100,7 +101,7 @@ const int InsertNewNode_Head(const char* *pszParam)
     {
         //Using Dummy Node
         g_DummyNode.pnNext = pNode;
-        AddData(pNode, pszParam);
+        //AddData(pNode, pszParam);
         /*
         //Using pHead
         g_pHead = pNode;
@@ -113,7 +114,7 @@ const int InsertNewNode_Head(const char* *pszParam)
         //Using DummyNode
         pNode->pnNext = g_DummyNode.pnNext;
         g_DummyNode.pnNext = pNode;
-        AddData(pNode, pszParam);
+        //AddData(pNode, pszParam);
         /*
         //Using pHead
         pNode->pnNext = g_pHead;
@@ -136,17 +137,18 @@ const int InsertNewNode_Tail(const char** pszParam)
         return 0;
     }
 
-    //Node 생성
+    //Node 생성 + 입력받은 Data 저장
     UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
     memset(pNode, 0, sizeof(UserDataNode));
     UserDataNode *pSearch = NULL;               //Tail Node 위치 저장
+    AddData(pNode, pszParam);
 
     //branch1 - Dummy Node가 NULL 포인팅
     //=> 입력받은 Data를 Dummy Node 다음 위치에 추가
     if(IsEmpty() == 1)
     {
         g_DummyNode.pnNext = pNode;
-        AddData(pNode, pszParam);
+        //AddData(pNode, pszParam);
     }
 
     //branch2 - List가 비어있지 않은 상태
@@ -160,7 +162,7 @@ const int InsertNewNode_Tail(const char** pszParam)
         pSearch->pnNext = pNode;
 
         //새롭게 추가한 Node에 Data 저장
-        AddData(pNode, pszParam);
+        //AddData(pNode, pszParam);
     }
     return 1;
 }
@@ -172,12 +174,12 @@ void ReleaseAllList()
 {
 
     //Using DummyNode
-    UserDataNode *pDelete = g_DummyNode.pnNext;
+    UserDataNode *pDelete = g_DummyNode.pnNext;         //삭제 대상 Node
     /*
     //Using pHead
     UserDataNode *pDelete = g_pHead;
     */
-    UserDataNode *pTemp = NULL;
+    UserDataNode *pTemp = NULL;                         //다음 삭제 대상 Node 임시저장
 
     while(pDelete != NULL)
     {
@@ -193,10 +195,11 @@ void ReleaseAllList()
         free(pDelete);
         pDelete = pTemp;
     }
-    pDelete = NULL;
+    //pDelete = NULL;                               //=> 마지막 Node까지 삭제하면 자동으로 NULL 저장됨
 
     //핵중요! : List의 모든 Node가 할당 해제 된 이루에 Dummy Head Node는 NULL을 가리켜야함!
     g_DummyNode.pnNext = NULL;
+    //g_pHead = NULL;
 }
 
 //3_1. 특정 Node 검색 함수 for 삭제
@@ -285,6 +288,7 @@ const int DeleteNode(const char* *pszParam)
     pTarget = pSearch->pnNext;
 
     //2. 삭제 대상 Node의 앞쪽 Node와 뒤쪽 Node 연결
+    //=> 삭제 대상이 마지막 Node여도 g_DummyNode.pnNext에 NULL이 저장됨
     pSearch->pnNext = pSearch->pnNext->pnNext;
 
     //3. 삭제 대상 Node 삭제하기
