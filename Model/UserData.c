@@ -1,8 +1,8 @@
 //
 // Created by KHANG JU CHOI on 2023/02/25.
 //
-#ifndef ADDRESSBOOK_C_USERDATA_C
-#define ADDRESSBOOK_C_USERDATA_C
+//#ifndef ADDRESSBOOK_C_USERDATA_C
+//#define ADDRESSBOOK_C_USERDATA_C
 #include"UserData.h"
 #include<stdlib.h>
 #include<string.h>
@@ -46,7 +46,7 @@ void PrintAllList()
 //=> Data 추가 실패/성공 확인 위해 return const int
 //  --> 성공 1, 실패 0
 //=> User 측 에서는 입력할 Data만 입력하게 만들기(내부기능 고려X)
-const int InsertNewNode_Head(const char* *pszParam)
+const int InsertNewNode_Head(const char* name, const char* phoneNumber)
 {
     /* => InsertNewNode_end
     if(*pszParam == NULL || *(pszParam+1) == NULL)
@@ -84,7 +84,7 @@ const int InsertNewNode_Head(const char* *pszParam)
         }
 */
     //0. pszParam == NULL인 경우 (param의 유효성 검사)
-    if(*pszParam == NULL || *(pszParam+1) == NULL)
+    if(name == NULL || phoneNumber == NULL)
     {
         return 0;
     }
@@ -92,7 +92,7 @@ const int InsertNewNode_Head(const char* *pszParam)
     //1. Node 생성 + 입략받은 Data 저장
     UserDataNode* pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
     memset(pNode, 0, sizeof(UserDataNode));
-    AddData(pNode, pszParam);
+    AddData(pNode, name, phoneNumber);
 
     //2. Node 저장할 위치 검색
     //if(g_pHead == NULL)              //Using pHead
@@ -129,10 +129,10 @@ const int InsertNewNode_Head(const char* *pszParam)
 //2_1. 새로운 Node 추가 함수
 //=> Tail Node로 삽입
 // return 1: 성공, return 0: 실패
-const int InsertNewNode_Tail(const char** pszParam)
+const int InsertNewNode_Tail(const char *name, const char *phoneNumber)
 {
     //param 유효성 검사
-    if(*pszParam == NULL || *(pszParam+1) == NULL)
+    if(name == NULL || phoneNumber == NULL)
     {
         return 0;
     }
@@ -141,7 +141,7 @@ const int InsertNewNode_Tail(const char** pszParam)
     UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
     memset(pNode, 0, sizeof(UserDataNode));
     UserDataNode *pSearch = NULL;               //Tail Node 위치 저장
-    AddData(pNode, pszParam);
+    AddData(pNode, name, phoneNumber);
 
     //branch1 - Dummy Node가 NULL 포인팅
     //=> 입력받은 Data를 Dummy Node 다음 위치에 추가
@@ -206,7 +206,7 @@ void ReleaseAllList()
 //=> Dummy Node사용
 //=> call back 되는 함수
 //=> 찾고자 하는 대상 Node의 직전 Node 주소 return ()
-UserDataNode* SearchNode(const char* *pszParam)
+UserDataNode* SearchNode(const char *name, const char *phoneNumber)
 {
     UserDataNode *pSearch = &g_DummyNode;
     if(pSearch == NULL)
@@ -214,14 +214,14 @@ UserDataNode* SearchNode(const char* *pszParam)
         return NULL;
     }
 
-    const unsigned long nLength_name = strlen(*pszParam);
-    const unsigned long nLength_phoneNumber = strlen(*(pszParam+1));
+    const unsigned long nLength_name = strlen(name);
+    const unsigned long nLength_phoneNumber = strlen(phoneNumber);
 
 
     while (pSearch->pnNext != NULL)
     {
-        if (strncmp(pSearch->pnNext->strData.name, *pszParam, nLength_name + 1) == 0
-            && strncmp(pSearch->pnNext->strData.phoneNumber, *(pszParam + 1), nLength_phoneNumber + 1) == 0)
+        if (strncmp(pSearch->pnNext->strData.name, name, nLength_name + 1) == 0
+            && strncmp(pSearch->pnNext->strData.phoneNumber, phoneNumber, nLength_phoneNumber + 1) == 0)
         {
             return pSearch;
         }
@@ -268,14 +268,14 @@ UserDataNode* SearchNode(const char* *pszParam)
 
 //3_2. 특정 Node 삭제 함수
 //=> Dummy Node 사용
-const int DeleteNode(const char* *pszParam)
+const int DeleteNode(const char *name, const char *phoneNumber)
 {
-    if(pszParam == NULL)
+    if(name == NULL || phoneNumber == NULL)
     {
         return 0;
     }
 
-    UserDataNode *pSearch = SearchNode(pszParam);        //삭제 대상 Node의 앞쪽 Node 주소 return
+    UserDataNode *pSearch = SearchNode(name, phoneNumber);        //삭제 대상 Node의 앞쪽 Node 주소 return
     UserDataNode *pTarget = NULL;                        //삭제 대상 Node 주소 임시저장
 
     if(pSearch == NULL)
@@ -290,6 +290,10 @@ const int DeleteNode(const char* *pszParam)
     //2. 삭제 대상 Node의 앞쪽 Node와 뒤쪽 Node 연결
     //=> 삭제 대상이 마지막 Node여도 g_DummyNode.pnNext에 NULL이 저장됨
     pSearch->pnNext = pSearch->pnNext->pnNext;
+
+    //+) 삭제 Data 출력
+    printf("Delete : [%p] %s, next[%p]\n", pTarget, pTarget->strData.name, pTarget->pnNext);
+    printf("Delete : [%p] %s, next[%p]\n", pTarget, pTarget->strData.phoneNumber, pTarget->pnNext);
 
     //3. 삭제 대상 Node 삭제하기
     free(pTarget->strData.name);
@@ -356,17 +360,17 @@ const int DeleteNode(const char* *pszParam)
 }
 */
 
-void AddData(UserDataNode* pNode, const char* *pszParam)
+void AddData(UserDataNode* pNode, const char *name, const char *phoneNumber )
 {
-    const unsigned long nLength_name = strlen(*pszParam);
-    const unsigned long nLength_phoneNumber = strlen(*(pszParam+1));
+    const unsigned long nLength_name = strlen(name);
+    const unsigned long nLength_phoneNumber = strlen(phoneNumber);
 
     //이름, 번호 저장할 메모리 동적할당
     pNode->strData.name = (char*)malloc(nLength_name+1);
-    strncpy(pNode->strData.name, *pszParam, nLength_name+1);
+    strncpy(pNode->strData.name, name, nLength_name+1);
 
     pNode->strData.phoneNumber = (char*)malloc(nLength_phoneNumber+1);
-    strncpy(pNode->strData.phoneNumber, *(pszParam+1), nLength_phoneNumber+1);
+    strncpy(pNode->strData.phoneNumber, phoneNumber, nLength_phoneNumber+1);
 }
 
 const int IsEmpty()
@@ -398,4 +402,36 @@ UserDataNode* SearchTail()
     return pSearch;
 }
 
-#endif
+
+//7. Linked List로 stack 구현 - push()
+void PushData(const char *name, const char *phoneNumber)
+{
+    InsertNewNode_Head(name, phoneNumber);
+}
+
+//8.  Linked List로 stack 구현 - pop)
+//=> param == pop 할 Node 임시 저장 for return
+//=> top(Head) 위치의 Node 복사 + 삭제
+const int PopData(UserDataNode *pTemp)
+{
+    if(IsEmpty() == 1)
+    {
+        printf("Error : Empty Stack\n");
+        return 0;
+    }
+
+    UserDataNode *pDelete = g_DummyNode.pnNext;     //pop 할 Node 자장 for Delete
+/*=> DeleteNode() 내부에서 중복되는 작업
+    //1. 앞/뒤 연결작업
+    g_DummyNode.pnNext = g_DummyNode.pnNext->pnNext;
+*/
+    //2. pTemp에 pop 할 Node 임시 저장(deep copy)
+    AddData(pTemp, pDelete->strData.name, pDelete->strData.phoneNumber);
+
+    //3. Node 삭제
+    DeleteNode(pDelete->strData.name, pDelete->strData.phoneNumber);
+
+    return 1;
+}
+
+//#endif

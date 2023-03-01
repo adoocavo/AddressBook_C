@@ -35,20 +35,20 @@ UserDataNode g_DummyNode;
 void PrintAllList();
 
 //2. 새로운 Node 추가 함수 - At Head
-const int InsertNewNode_Head(const char**);
+const int InsertNewNode_Head(const char*, const char*);
 
 //2_1. 새로운 Node 추가 함수 - At Tail
-const int InsertNewNode_Tail(const char**);
+const int InsertNewNode_Tail(const char*, const char*);
 
 
 //3. 전체 List 삭제 함수
 void ReleaseAllList();
 
 //3_1.특정 Node 검색 함수 for 삭제
-UserDataNode* SearchNode(const char**);
+UserDataNode* SearchNode(const char *, const char *);
 
 //3_2. 특정 Node 삭제 함수
-const int DeleteNode(const char**);
+const int DeleteNode(const char *, const char *);
 
 
 //4. 전체 비어있는 Node인지 확인(Dummy Node가 NULL 포인팅 하는지)
@@ -58,6 +58,16 @@ const int IsEmpty();
 UserDataNode* SearchTail();
 
 //6. Node에 동적할당 하여 name, phoneNumber 저장하는 함수
-void AddData(UserDataNode*, const char**);
+//=> Add Data to Node by Deep copy
+void AddData(UserDataNode*, const char *, const char *);
+
+//////////Stack///////////////
+
+//7. Linked List로 stack 구현 - push()
+void PushData(const char *, const char *);
+
+//8.  Linked List로 stack 구현 - pop)
+const int PopData(UserDataNode *);
+
 
 #endif
