@@ -24,12 +24,12 @@ typedef struct UserDataNode
 
 //전체 연결 리스트 관리하는 포인터 변수
 //=> 주의: 항상 1st Node를 가리켜야함
-UserDataNode* g_pHead;
+//UserDataNode* g_pHead;
 
 //전체 연결 리스트 관리하는 Dummy head Node
 UserDataNode g_DummyNode;
 
-
+/////////////////Single Linked List/////////////////////////
 // 연결 리스트 테스트 Code - 관리 Code
 //1. 전체 List 출력 함수
 void PrintAllList();
@@ -62,12 +62,24 @@ UserDataNode* SearchTail();
 void AddData(UserDataNode*, const char *, const char *);
 
 //////////Stack///////////////
+//=> LIFO
+//=> Stack 크기에 따른 pop/push 제한 기능도 필요
 
 //7. Linked List로 stack 구현 - push()
 void PushData(const char *, const char *);
 
 //8.  Linked List로 stack 구현 - pop)
 const int PopData(UserDataNode *);
+
+
+/////////////////Queue////////////////////////
+//=> FIFO
+
+//9. Linked List로 Queue 구현 - Enqueue
+void Enqueue(const char *, const char *);
+
+//10. Linked List로 Queue 구현 - Dequeue
+const int Dequeue(UserDataNode *);
 
 
 #endif

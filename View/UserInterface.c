@@ -4,10 +4,9 @@
 //
 // Created by KHANG JU CHOI on 2023/02/21.
 //
-//#ifndef ADDRESSBOOK_C_USERINTERFACE_C
-//#define ADDRESSBOOK_C_USERINTERFACE_C
+
 #include"UserInterface.h"
-#include<stdlib.h>
+//#include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
 void InputInterface(char* aryTemp, char* *aryBuffer, const int nSize)
@@ -30,5 +29,4 @@ void InputInterface(char* aryTemp, char* *aryBuffer, const int nSize)
     *(*(aryBuffer+1) + (strlen(*(aryBuffer+1))-1)) = '\0';
 }
 
-//#endif //ADDRESSBOOK_C_USERINTERFACE_H
 

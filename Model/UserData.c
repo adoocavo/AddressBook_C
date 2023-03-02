@@ -1,8 +1,7 @@
 //
 // Created by KHANG JU CHOI on 2023/02/25.
 //
-//#ifndef ADDRESSBOOK_C_USERDATA_C
-//#define ADDRESSBOOK_C_USERDATA_C
+
 #include"UserData.h"
 #include<stdlib.h>
 #include<string.h>
@@ -403,6 +402,8 @@ UserDataNode* SearchTail()
 }
 
 
+/////////////////Stack////////////////////////
+
 //7. Linked List로 stack 구현 - push()
 void PushData(const char *name, const char *phoneNumber)
 {
@@ -434,4 +435,15 @@ const int PopData(UserDataNode *pTemp)
     return 1;
 }
 
-//#endif
+/////////////////Queue////////////////////////
+void Enqueue(const char *name, const char *phoneNumber)
+{
+    InsertNewNode_Tail(name, phoneNumber);
+}
+
+const int Dequeue(UserDataNode *pTemp)
+{
+   return PopData(pTemp);
+}
+
+

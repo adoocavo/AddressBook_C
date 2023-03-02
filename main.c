@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include<stdlib.h>
+//#include<stdlib.h>
 //#include<string.h>
 #include"Model/UserData.h"
 #include"View/UserInterface.h"
@@ -56,6 +56,8 @@ int main()
                 InsertNewNode_Tail(*aryBuffer, *(aryBuffer+1));
                 break;
 
+            ////////////Stack/////////////////
+
             case 6:
                 //Stack을 Linked List로 구현
                 //Data 입력받기 - PushData
@@ -68,18 +70,44 @@ int main()
                 //Data 빼내기 - PopData
                 //popTemp 포안터 동적할당 해제
                 //=> 내부 기능 함수(PopData)에서 동적할당 한걸 인터페이스에서 해제하는게 좋은 code인가?
-
+                //=> 걍 동적할당 하지말고 Node 생성해서 포인터로 넘기자
                 {
-                    UserDataNode *popNode = (UserDataNode*)malloc(sizeof(UserDataNode));;
-                    PopData(popNode);
+                    //UserDataNode *popNode = (UserDataNode*)malloc(sizeof(UserDataNode));;
+                    UserDataNode popNode = {};
+                    PopData(&popNode);
 
-                    printf("%s\n", popNode->strData.name);
-                    printf("%s\n", popNode->strData.phoneNumber);
+                    printf("%s\n", popNode.strData.name);
+                    printf("%s\n", popNode.strData.phoneNumber);
 
-                    free(popNode);
+                    //free(popNode);
                 }
                 break;
 
+            ////////////Queue/////////////////
+
+            case 8:
+                //Queue를 Linked List로 구현
+                //Data 입력받기 - Enqueue
+                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
+                Enqueue(*aryBuffer, *(aryBuffer+1));
+                break;
+
+            case 9:
+                //Queue Linked List로 구현
+                //Data 빼내기 - Dequeue
+                //popTemp 포안터 동적할당 해제
+                //=> 내부 기능 함수(PopData)에서 동적할당 한걸 인터페이스에서 해제하는게 좋은 code인가?
+                {
+                    //UserDataNode *depueueNode = (UserDataNode*)malloc(sizeof(UserDataNode));;
+                    UserDataNode dequeueNode = {};
+                    Dequeue(&dequeueNode);
+
+                    printf("%s\n", dequeueNode.strData.name);
+                    printf("%s\n", dequeueNode.strData.phoneNumber);
+
+                    //free(dequeueNode);
+                }
+                break;
 
             default:
                 break;
