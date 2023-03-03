@@ -44,7 +44,7 @@ const int InsertAtHead(const char *name, const char *phoneNumber)
 
     //추가할 Node 생성
     UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
-    memset(0, pNode, sizeof(UserDataNode));
+    memset(pNode, 0, sizeof(UserDataNode));
 
     //생성할 Node에 입력 Data 저장 - Deep copy
     AddData(pNode, name, phoneNumber);
@@ -74,7 +74,7 @@ const int InsertAtHead(const char *name, const char *phoneNumber)
         g_pHead->pnNext = pNode;
         pNode->pnPrev = g_pHead;
     }
-
+    ++nNodeCount;
     return SUCCESS;
 
 }
@@ -90,7 +90,7 @@ const int InsertAtTail(const char *name, const char *phoneNumber)
 
     //추가할 Node 생성
     UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
-    memset(0, pNode, sizeof(UserDataNode));
+    memset(pNode, 0, sizeof(UserDataNode));
 
     //생성할 Node에 입력 Data 저장 - Deep copy
     AddData(pNode, name, phoneNumber);
@@ -121,6 +121,7 @@ const int InsertAtTail(const char *name, const char *phoneNumber)
         g_pTail->pnPrev = pNode;
     }
 
+    ++nNodeCount;
     return SUCCESS;
 }
 
@@ -138,11 +139,65 @@ const int ReleaseList()
     UserDataNode *pDelete = g_pHead->pnNext;
     while (pDelete == g_pTail)
     {
-
+        DeleteNode(pDelete);
+        pDelete = pDelete->pnNext;
     }
 
+    return SUCCESS;
+}
+
+//5. 특정 Node 삭제 함수
+const int DeleteNode(UserDataNode* pDelete)
+{
+    if(CheckParam(pDelete->strData.name, pDelete->strData.phoneNumber)
+    == ERROR)
+    {
+        return ERROR;
+    }
+
+    //삭제 대상 Node 앞/뒤 연결
+    pDelete->pnPrev->pnNext = pDelete->pnNext;
+    pDelete->pnNext->pnPrev = pDelete->pnPrev;
+
+    //삭제 대상 삭제
+    free(pDelete->strData.name);
+    free(pDelete->strData.phoneNumber);
+    pDelete->strData.name = NULL;
+    pDelete->strData.phoneNumber = NULL;
+
+    free(pDelete);
+    pDelete = NULL;
+
+    --nNodeCount;
+    return SUCCESS;
 
 }
+
+//6. 특정 Node 검색 함수
+//=> Head -> Tail 방향으로 검색
+UserDataNode* SearchNode(const char *name, const char *phoneNumber)
+{
+    if(CheckParam(name, phoneNumber) == ERROR)
+    {
+        return NULL;
+    }
+
+    UserDataNode *pSearch = g_pHead->pnNext;
+
+    while(pSearch == g_pTail)
+    {
+        if (strncmp(pSearch->strData.name, name, strlen(pSearch->strData.name) + 1) == 0 &&
+            strncmp(pSearch->strData.phoneNumber, phoneNumber, strlen(pSearch->strData.phoneNumber) + 1) == 0)
+        {
+            return pSearch;
+        }
+
+        pSearch = pSearch->pnNext;
+    }
+
+    return NULL;
+}
+
 
 //+) 리스트 비어있는지 확인
 const int IsEmpty()
