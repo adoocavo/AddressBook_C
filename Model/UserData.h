@@ -83,10 +83,16 @@ static inline void DeInitList()
 }
 
 //10. 특정 index에 Node 삽입
+//=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
+//=> 입력받은 index < nNodeCount && 입력받은 index >= 0 --> 해당 index에 위치한 Node의 Head 방향에 Insert
+//=> 입력받은 index < 0 --> ERROR
 const int InsertAtIdx(const int, const char *, const char *);
 
 //11. 특정 index의 Node 검색 + 주소 리턴
 UserDataNode * GetNodeAtIdx(const int);
+
+//12. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
+const int InsertBefore(UserDataNode *curNode, const char *, const char *);
 
 /* => 해당 Index에 새로운 Node를 넣으면 기존 Node는 Tail 방향으로 밀어져야 함
 //12. 특정 Node의 Head 방향으로 새로운 Node Insert

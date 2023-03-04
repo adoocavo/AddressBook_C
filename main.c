@@ -72,10 +72,6 @@ int main()
                     InsertAtIdx(idx, *aryBuffer, *(aryBuffer+1));
                 }
 
-
-
-
-
             default:
                 break;
 

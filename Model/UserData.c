@@ -41,112 +41,14 @@ void InitList()
 //2. Head 방향으로 새로운 Node Insert
 const int InsertAtHead(const char *name, const char *phoneNumber)
 {
-    //param 유효성 검사
-    if(CheckParam(name, phoneNumber) == ERROR)
-    {
-        return ERROR;
-    }
-
-    //추가할 Node 생성
-    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
-    memset(pNode, 0, sizeof(UserDataNode));
-
-    //생성할 Node에 입력 Data 저장 - Deep copy
-    AddData(pNode, name, phoneNumber);
-
-    //Insert 전 전/후 Node 연결 처리
-    //1. 새로 삽입하는 Node의 prev,next 채우기
-    pNode->pnNext = g_pHead->pnNext;
-    pNode->pnPrev = g_pHead;
-
-    //2. 새로 삽입하는 Node에 연결된 prev,next Node의 next prev 채우기
-    pNode->pnNext->pnPrev = pNode;
-    g_pHead->pnNext = pNode;
-/*
-    //1. 비어있는 List
-    if(IsEmpty() == YES)
-    {
-
-        //새로 삽입하는 Node - Head Dummy Node 간 연결
-        g_pHead->pnNext = pNode;
-        pNode->pnPrev = g_pHead;
-
-        //새로 삽입하는 Node - Tail Dummy Node 간 연결
-        g_pTail->pnPrev = pNode;
-        pNode->pnNext = g_pTail;
-    }
-
-    //2. Head Dummy Node 바로 뒤에 Insert
-    else {
-        //새로 삽입하는 Node - 다음 Node 연결
-        pNode->pnNext = g_pHead->pnNext;
-        g_pHead->pnNext->pnPrev = pNode;
-
-        //Head Node - 새로 삽입하는 Node 연결
-        g_pHead->pnNext = pNode;
-        pNode->pnPrev = g_pHead;
-    }
-*/
-
-    ++g_nNodeCount;
-    return SUCCESS;
-
+    return InsertBefore(g_pHead->pnNext, name, phoneNumber);
 }
 
 
 //3. Tail 방향으로 새로운 Node Insert
 const int InsertAtTail(const char *name, const char *phoneNumber)
 {
-    //param 유효성 검사
-    if(CheckParam(name, phoneNumber) == ERROR)
-    {
-        return ERROR;
-    }
-
-    //추가할 Node 생성
-    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
-    memset(pNode, 0, sizeof(UserDataNode));
-
-    //생성할 Node에 입력 Data 저장 - Deep copy
-    AddData(pNode, name, phoneNumber);
-
-    //Insert 전 전/후 Node 연결 처리
-
-    //1. 새롭게 추가하는 Node의 prev, next 채우기
-    pNode->pnPrev = g_pTail->pnPrev;
-    pNode->pnNext = g_pTail;
-
-    //2. 새로 삽입하는 Node에 연결된 prev,next Node의 next prev 채우기
-    pNode->pnPrev->pnNext = pNode;
-    pNode->pnNext->pnPrev = pNode;
-
-/*
-    //1. 비어있는 List
-    if(IsEmpty() == YES)
-    {
-        //새로 삽입하는 Node - Head Dummy Node 간 연결
-        g_pHead->pnNext = pNode;
-        pNode->pnPrev = g_pHead;
-
-        //새로 삽입하는 Node - Tail Dummy Node 간 연결
-        g_pTail->pnPrev = pNode;
-        pNode->pnNext = g_pTail;
-    }
-
-    //2. Tail Dummy Node 바로 앞에 Insert
-    else
-    {
-        //새로 삽입 Node - Tail Dummy Node 바로 앞 Node 간 연결
-        pNode->pnPrev = g_pTail->pnPrev;
-        g_pTail->pnPrev->pnNext = pNode;
-
-        //새로 삽입 Node - Tail Dummy Node 간 연결
-        pNode->pnNext = g_pTail;
-        g_pTail->pnPrev = pNode;
-    }
-*/
-    ++g_nNodeCount;
-    return SUCCESS;
+    return InsertBefore(g_pTail, name, phoneNumber);
 }
 
 //4. 모든 Node 할당해제(삭제) 함수
@@ -257,31 +159,32 @@ void PrintAllList()
 }
 
 //10. 특정 index에 Node 삽입
+//=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
+//=> 입력받은 index < nNodeCount && 입력받은 index >= 0 --> 해당 index에 위치한 Node의 Head 방향에 Insert
+//=> 입력받은 index < 0 --> ERROR
 const int InsertAtIdx(const int idx, const char *name, const char *phoneNumber)
 {
-    if(CheckParam(name, phoneNumber) == ERROR || idx >= g_nNodeCount)
+    //입력받은 index < 0 --> ERROR
+    if(idx < 0)
     {
         return ERROR;
     }
 
-    //삽입하려는 Index의 현재 Node
-    UserDataNode *pSearch = GetNodeAtIdx(idx);
-    //특정 Index에 삽입하려는 새로운 Node
-    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
+    //=> 입력받은 index < nNodeCount && 입력받은 index >= 0 --> 해당 index에 위치한 Node의 Head 방향에 Insert
+    //=> index가 존재하는 범위 내에서만 loop돌게 만듦
+    else if(idx>=0 && idx < g_nNodeCount)
+    {
+        //삽입하려는 Index의 현재 Node
+        UserDataNode *pCurNode = GetNodeAtIdx(idx);
+        //pCurNode의 Head 방향에 입력받은 Data 저장한 새로운 Node Insert
+        return InsertBefore(pCurNode, name, phoneNumber);
+    }
 
-    //1. 새로 생성한 Node에 입력받은 Data 저장
-    AddData(pNode, name, phoneNumber);
-
-    //2. 검색 결과 pNode의 Head 방향에 Insert
-    pNode->pnNext = pSearch;
-    pNode->pnPrev = pSearch->pnPrev;
-
-    pSearch->pnPrev->pnNext = pNode;
-    pSearch->pnPrev = pNode;
-
-    //g_nNodeCount 수정
-    ++g_nNodeCount;
-    return SUCCESS;
+    //=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
+    else
+    {
+        return InsertAtTail(name, phoneNumber);
+    }
 }
 
 //11. 특정 index의 Node 검색 + 주소 리턴
@@ -296,6 +199,33 @@ UserDataNode * GetNodeAtIdx(const int idx)
         ++countIdx;
     }
     return pSearch;
+}
+
+//12. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
+const int InsertBefore(UserDataNode *pCurNode, const char *name, const char *phoneNumber)
+{
+    if(CheckParam(name, phoneNumber) == ERROR)
+    {
+        return ERROR;
+    }
+
+    //pCurNode 위치에 삽입하려는 새로운 Node
+    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
+
+    //1. 새로 생성한 Node에 입력받은 Data 저장
+    AddData(pNode, name, phoneNumber);
+
+    //2. pCurNode의 Head 방향에 pNode Insert
+    pNode->pnNext = pCurNode;
+    pNode->pnPrev = pCurNode->pnPrev;
+
+    //순서주의 : pCurNode->pnPrev 수정 전에 pCurNode->pnPrev->pnNext에 접근
+    pCurNode->pnPrev->pnNext = pNode;
+    pCurNode->pnPrev = pNode;
+
+    //Insert/Delete 후 반드시 전역 Node counting 변수 수정
+    ++g_nNodeCount;
+    return SUCCESS;
 }
 
 //+) 리스트 비어있는지 확인
