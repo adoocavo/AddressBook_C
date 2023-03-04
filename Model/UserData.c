@@ -31,6 +31,8 @@ void InitList()
     //Head/Tail Node가 서로 포인팅 하도록 만들기 Empty 상황
     g_pHead->pnNext = g_pTail;
     g_pTail->pnPrev = g_pHead;
+
+    printf("InitList\n");
 }
 
 //2. Head 방향으로 새로운 Node Insert
@@ -135,12 +137,17 @@ const int ReleaseList()
     }
 
     //Head -> Tail 방향으로 삭제
-    //2. 삭제 대상 Node 임시 저장 포인터
-    UserDataNode *pDelete = g_pHead->pnNext;
-    while (pDelete == g_pTail)
+    //2. 대상 Node 차례로 할당 해제
+    UserDataNode *pDelete = g_pHead->pnNext;            //현재 삭제 대상 저장
+    UserDataNode *pTemp = NULL;                         //다음 삭제 대상 임시저장
+
+    while (pDelete != g_pTail)
     {
+        //다음 삭제 대상 임시 저장
+        pTemp = pDelete->pnNext;
+
         DeleteNode(pDelete);
-        pDelete = pDelete->pnNext;
+        pDelete = pTemp;
     }
 
     return SUCCESS;
@@ -158,6 +165,10 @@ const int DeleteNode(UserDataNode* pDelete)
     //삭제 대상 Node 앞/뒤 연결
     pDelete->pnPrev->pnNext = pDelete->pnNext;
     pDelete->pnNext->pnPrev = pDelete->pnPrev;
+
+    //삭제 대상 출력
+    printf("Delete : [%p] %s, next[%p]\n", pDelete, pDelete->strData.name, pDelete->pnNext);
+    printf("Delete : [%p] %s, next[%p]\n", pDelete, pDelete->strData.phoneNumber, pDelete->pnNext);
 
     //삭제 대상 삭제
     free(pDelete->strData.name);
@@ -184,10 +195,10 @@ UserDataNode* SearchNode(const char *name, const char *phoneNumber)
 
     UserDataNode *pSearch = g_pHead->pnNext;
 
-    while(pSearch == g_pTail)
+    while(pSearch != g_pTail)
     {
-        if (strncmp(pSearch->strData.name, name, strlen(pSearch->strData.name) + 1) == 0 &&
-            strncmp(pSearch->strData.phoneNumber, phoneNumber, strlen(pSearch->strData.phoneNumber) + 1) == 0)
+        if (strncmp(pSearch->strData.name, name, strlen(pSearch->strData.name)) == 0 &&
+            strncmp(pSearch->strData.phoneNumber, phoneNumber, strlen(pSearch->strData.phoneNumber)) == 0)
         {
             return pSearch;
         }
@@ -198,6 +209,20 @@ UserDataNode* SearchNode(const char *name, const char *phoneNumber)
     return NULL;
 }
 
+//8. 전체 List 출력 함수
+//Head -> Tail 방향으로
+void PrintAllList()
+{
+    UserDataNode* pPrint = g_pHead->pnNext;
+
+    while(pPrint != g_pTail) {
+        printf("[%p] %s, next[%p]\n", pPrint, pPrint->strData.name, pPrint->pnNext);
+        printf("[%p] %s, next[%p]\n", pPrint, pPrint->strData.phoneNumber, pPrint->pnNext);
+
+        pPrint = pPrint->pnNext;
+    }
+}
+
 
 //+) 리스트 비어있는지 확인
 const int IsEmpty()
@@ -205,7 +230,7 @@ const int IsEmpty()
     if(g_pHead->pnNext == g_pTail
     && g_pTail->pnPrev == g_pHead)
     {
-        printf("Empty List");
+        printf("Empty List\n");
         return YES;
     }
 

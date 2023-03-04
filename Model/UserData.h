@@ -4,6 +4,7 @@
 #ifndef ADDRESSBOOK_C_USERDATA_H
 #define ADDRESSBOOK_C_USERDATA_H
 #include<stdio.h>
+#include<stdlib.h>
 enum
 {
     NO = 0,
@@ -63,6 +64,21 @@ static inline const int GetSize()
     return nNodeCount;
 }
 
+//8. 전체 List 출력 함수
+void PrintAllList();
+
+//9. 초기화 리셋 함수
+static inline void DeInitList()
+{
+    free(g_pHead);
+    free(g_pTail);
+
+    g_pHead = NULL;
+    g_pTail = NULL;
+
+    printf("DeInitList\n");
+
+}
 //+) 리스트 비어있는지 확인
 const int IsEmpty();
 
@@ -80,65 +96,6 @@ static inline const int CheckParam(const char *name, const char *phoneNumber)
 
     return SUCCESS;
 }
-
-
-
-
-//
-///////////////////Single Linked List/////////////////////////
-//// 연결 리스트 테스트 Code - 관리 Code
-////1. 전체 List 출력 함수
-//void PrintAllList();
-//
-////2. 새로운 Node 추가 함수 - At Head
-//const int InsertNewNode_Head(const char*, const char*);
-//
-////2_1. 새로운 Node 추가 함수 - At Tail
-//const int InsertNewNode_Tail(const char*, const char*);
-//
-//
-////3. 전체 List 삭제 함수
-////void ReleaseAllList();
-//
-//////3_1.특정 Node 검색 함수 for 삭제
-////UserDataNode* SearchNode(const char *, const char *);
-////
-//////3_2. 특정 Node 삭제 함수
-////const int DeleteNode(const char *, const char *);
-//
-//
-////4. 전체 비어있는 Node인지 확인(Dummy Node가 NULL 포인팅 하는지)
-//const int IsEmpty();
-//
-////5. 마지막(Tail) Node의 주소 return
-//UserDataNode* SearchTail();
-//
-////////////Stack///////////////
-////=> LIFO
-////=> Stack 크기에 따른 pop/push 제한 기능도 필요
-//
-////7. Linked List로 stack 구현 - push()
-//void PushData(const char *, const char *);
-//
-////8.  Linked List로 stack 구현 - pop)
-//const int PopData(UserDataNode *);
-//
-//
-///////////////////Queue////////////////////////
-////=> FIFO
-//
-////9. Linked List로 Queue 구현 - Enqueue
-//void Enqueue(const char *, const char *);
-//
-////10. Linked List로 Queue 구현 - Dequeue
-//const int Dequeue(UserDataNode *);
-
-
-
-
-
-
-
 
 
 #endif

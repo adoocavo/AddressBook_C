@@ -13,6 +13,7 @@ int main()
     //FILE* const fp = stdin;
     char aryTemp[SIZE_OF_TEMP_BUFFER] = {};
     char* aryBuffer[NUM_OF_STRING_ITEMS] = {};
+    InitList();
 
 //    printf("%d\n", sizeof(aryTemp)/ sizeof(char));
 //    printf("%d\n", sizeof(aryTemp)/ sizeof(char*));
@@ -28,21 +29,21 @@ int main()
         switch(nMenu)
         {
             case 1:
-                //Data 입력받기 - InsertNewNode_first
+                //Data 입력받기 - InsertAtHead
                 InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertNewNode_Head(*aryBuffer, *(aryBuffer+1));
+                InsertAtHead(*aryBuffer, *(aryBuffer+1));
                 break;
 
 
             case 2:
                 //특정 Data 삭제하기 - DeleteNode
                 InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                DeleteNode(*aryBuffer, *(aryBuffer+1));
+                DeleteNode(SearchNode(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             case 3:
                 //전채 List 삭제하기 - ReleaseAllList
-                ReleaseAllList();
+                ReleaseList();
                 break;
 
             case 4:
@@ -51,62 +52,14 @@ int main()
                 break;
 
             case 5:
-                //Data 입력받기 - InsertNewNode_Tail
+                //Data 입력받기 - InsertAtTail
                 InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertNewNode_Tail(*aryBuffer, *(aryBuffer+1));
+                InsertAtTail(*aryBuffer, *(aryBuffer+1));
                 break;
-
-            ////////////Stack/////////////////
 
             case 6:
-                //Stack을 Linked List로 구현
-                //Data 입력받기 - PushData
-                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                PushData(*aryBuffer, *(aryBuffer+1));
-                break;
-
-            case 7:
-                //Stack을 Linked List로 구현
-                //Data 빼내기 - PopData
-                //popTemp 포안터 동적할당 해제
-                //=> 내부 기능 함수(PopData)에서 동적할당 한걸 인터페이스에서 해제하는게 좋은 code인가?
-                //=> 걍 동적할당 하지말고 Node 생성해서 포인터로 넘기자
-                {
-                    //UserDataNode *popNode = (UserDataNode*)malloc(sizeof(UserDataNode));;
-                    UserDataNode popNode = {};
-                    PopData(&popNode);
-
-                    printf("%s\n", popNode.strData.name);
-                    printf("%s\n", popNode.strData.phoneNumber);
-
-                    //free(popNode);
-                }
-                break;
-
-            ////////////Queue/////////////////
-
-            case 8:
-                //Queue를 Linked List로 구현
-                //Data 입력받기 - Enqueue
-                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
-                Enqueue(*aryBuffer, *(aryBuffer+1));
-                break;
-
-            case 9:
-                //Queue Linked List로 구현
-                //Data 빼내기 - Dequeue
-                //popTemp 포안터 동적할당 해제
-                //=> 내부 기능 함수(PopData)에서 동적할당 한걸 인터페이스에서 해제하는게 좋은 code인가?
-                {
-                    //UserDataNode *depueueNode = (UserDataNode*)malloc(sizeof(UserDataNode));;
-                    UserDataNode dequeueNode = {};
-                    Dequeue(&dequeueNode);
-
-                    printf("%s\n", dequeueNode.strData.name);
-                    printf("%s\n", dequeueNode.strData.phoneNumber);
-
-                    //free(dequeueNode);
-                }
+                //전체 Node 개수 출력
+                printf("전체 Node 개수(Head/Tail)제외 : %d\n", GetSize());
                 break;
 
             default:
@@ -115,4 +68,5 @@ int main()
         }
     }
 
+    DeInitList();
 }
