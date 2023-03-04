@@ -30,14 +30,14 @@ int main()
         {
             case 1:
                 //Data 입력받기 - InsertAtHead
-                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
                 InsertAtHead(*aryBuffer, *(aryBuffer+1));
                 break;
 
 
             case 2:
                 //특정 Data 삭제하기 - DeleteNode
-                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
                 DeleteNode(SearchNode(*aryBuffer, *(aryBuffer+1)));
                 break;
 
@@ -53,7 +53,7 @@ int main()
 
             case 5:
                 //Data 입력받기 - InsertAtTail
-                InputInterface(aryTemp, aryBuffer, sizeof(aryTemp));
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
                 InsertAtTail(*aryBuffer, *(aryBuffer+1));
                 break;
 
@@ -61,6 +61,20 @@ int main()
                 //전체 Node 개수 출력
                 printf("전체 Node 개수(Head/Tail)제외 : %d\n", GetSize());
                 break;
+
+            case 7:
+                //특정 Index에 Node Insert
+                {
+                    int idx;
+                    InputInterface_index(&idx);
+                    InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
+
+                    InsertAtIdx(idx, *aryBuffer, *(aryBuffer+1));
+                }
+
+
+
+
 
             default:
                 break;

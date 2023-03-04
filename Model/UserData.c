@@ -32,6 +32,9 @@ void InitList()
     g_pHead->pnNext = g_pTail;
     g_pTail->pnPrev = g_pHead;
 
+    //Node 개수 counting 전역 변수도 초기화
+    g_nNodeCount = 0;
+
     printf("InitList\n");
 }
 
@@ -52,10 +55,18 @@ const int InsertAtHead(const char *name, const char *phoneNumber)
     AddData(pNode, name, phoneNumber);
 
     //Insert 전 전/후 Node 연결 처리
+    //1. 새로 삽입하는 Node의 prev,next 채우기
+    pNode->pnNext = g_pHead->pnNext;
+    pNode->pnPrev = g_pHead;
 
+    //2. 새로 삽입하는 Node에 연결된 prev,next Node의 next prev 채우기
+    pNode->pnNext->pnPrev = pNode;
+    g_pHead->pnNext = pNode;
+/*
     //1. 비어있는 List
     if(IsEmpty() == YES)
     {
+
         //새로 삽입하는 Node - Head Dummy Node 간 연결
         g_pHead->pnNext = pNode;
         pNode->pnPrev = g_pHead;
@@ -66,8 +77,7 @@ const int InsertAtHead(const char *name, const char *phoneNumber)
     }
 
     //2. Head Dummy Node 바로 뒤에 Insert
-    else
-    {
+    else {
         //새로 삽입하는 Node - 다음 Node 연결
         pNode->pnNext = g_pHead->pnNext;
         g_pHead->pnNext->pnPrev = pNode;
@@ -76,10 +86,13 @@ const int InsertAtHead(const char *name, const char *phoneNumber)
         g_pHead->pnNext = pNode;
         pNode->pnPrev = g_pHead;
     }
-    ++nNodeCount;
+*/
+
+    ++g_nNodeCount;
     return SUCCESS;
 
 }
+
 
 //3. Tail 방향으로 새로운 Node Insert
 const int InsertAtTail(const char *name, const char *phoneNumber)
@@ -99,6 +112,15 @@ const int InsertAtTail(const char *name, const char *phoneNumber)
 
     //Insert 전 전/후 Node 연결 처리
 
+    //1. 새롭게 추가하는 Node의 prev, next 채우기
+    pNode->pnPrev = g_pTail->pnPrev;
+    pNode->pnNext = g_pTail;
+
+    //2. 새로 삽입하는 Node에 연결된 prev,next Node의 next prev 채우기
+    pNode->pnPrev->pnNext = pNode;
+    pNode->pnNext->pnPrev = pNode;
+
+/*
     //1. 비어있는 List
     if(IsEmpty() == YES)
     {
@@ -122,8 +144,8 @@ const int InsertAtTail(const char *name, const char *phoneNumber)
         pNode->pnNext = g_pTail;
         g_pTail->pnPrev = pNode;
     }
-
-    ++nNodeCount;
+*/
+    ++g_nNodeCount;
     return SUCCESS;
 }
 
@@ -156,8 +178,15 @@ const int ReleaseList()
 //5. 특정 Node 삭제 함수
 const int DeleteNode(UserDataNode* pDelete)
 {
+/*
     if(CheckParam(pDelete->strData.name, pDelete->strData.phoneNumber)
     == ERROR)
+    {
+        return ERROR;
+    }
+*/
+    //Param 유효성 검사
+    if(pDelete == NULL || CheckParam(pDelete->strData.name, pDelete->strData.phoneNumber) == ERROR)
     {
         return ERROR;
     }
@@ -179,7 +208,7 @@ const int DeleteNode(UserDataNode* pDelete)
     free(pDelete);
     pDelete = NULL;
 
-    --nNodeCount;
+    --g_nNodeCount;
     return SUCCESS;
 
 }
@@ -193,6 +222,7 @@ UserDataNode* SearchNode(const char *name, const char *phoneNumber)
         return NULL;
     }
 
+    //검색 대상 : from g_pHead->pnNext to g_pTail->pnPrev
     UserDataNode *pSearch = g_pHead->pnNext;
 
     while(pSearch != g_pTail)
@@ -213,16 +243,60 @@ UserDataNode* SearchNode(const char *name, const char *phoneNumber)
 //Head -> Tail 방향으로
 void PrintAllList()
 {
+    printf("PrintAllList(): g_nNodeCount : %d, g_pHead [%p], g_pTail[%p]\n", g_nNodeCount, g_pHead, g_pTail);
+
+
     UserDataNode* pPrint = g_pHead->pnNext;
 
     while(pPrint != g_pTail) {
-        printf("[%p] %s, next[%p]\n", pPrint, pPrint->strData.name, pPrint->pnNext);
-        printf("[%p] %s, next[%p]\n", pPrint, pPrint->strData.phoneNumber, pPrint->pnNext);
+        printf("prev[%p] %s[%p], next[%p]\n", pPrint->pnPrev, pPrint->strData.name, pPrint, pPrint->pnNext);
+        printf("prev[%p] %s[%p], next[%p]\n", pPrint->pnPrev, pPrint->strData.phoneNumber, pPrint, pPrint->pnNext);
 
         pPrint = pPrint->pnNext;
     }
 }
 
+//10. 특정 index에 Node 삽입
+const int InsertAtIdx(const int idx, const char *name, const char *phoneNumber)
+{
+    if(CheckParam(name, phoneNumber) == ERROR || idx >= g_nNodeCount)
+    {
+        return ERROR;
+    }
+
+    //삽입하려는 Index의 현재 Node
+    UserDataNode *pSearch = GetNodeAtIdx(idx);
+    //특정 Index에 삽입하려는 새로운 Node
+    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
+
+    //1. 새로 생성한 Node에 입력받은 Data 저장
+    AddData(pNode, name, phoneNumber);
+
+    //2. 검색 결과 pNode의 Head 방향에 Insert
+    pNode->pnNext = pSearch;
+    pNode->pnPrev = pSearch->pnPrev;
+
+    pSearch->pnPrev->pnNext = pNode;
+    pSearch->pnPrev = pNode;
+
+    //g_nNodeCount 수정
+    ++g_nNodeCount;
+    return SUCCESS;
+}
+
+//11. 특정 index의 Node 검색 + 주소 리턴
+UserDataNode * GetNodeAtIdx(const int idx)
+{
+    UserDataNode *pSearch = g_pHead->pnNext;
+    int countIdx = 0;
+
+    while(countIdx != idx)
+    {
+        pSearch = pSearch->pnNext;
+        ++countIdx;
+    }
+    return pSearch;
+}
 
 //+) 리스트 비어있는지 확인
 const int IsEmpty()

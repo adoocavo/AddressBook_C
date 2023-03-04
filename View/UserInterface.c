@@ -9,7 +9,9 @@
 //#include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
-void InputInterface(char* aryTemp, char* *aryBuffer, const int nSize)
+
+//1. strData 입력받는 인터페이스 함수
+void InputInterface_strData(char* aryTemp, char* *aryBuffer, const int nSize)
 {
     printf("이름을 입력하시오 : ");
     fgets(aryTemp, nSize, stdin);
@@ -30,3 +32,10 @@ void InputInterface(char* aryTemp, char* *aryBuffer, const int nSize)
 }
 
 
+//2. index 입력받는 인터페이스 함수
+void InputInterface_index(int *idx)
+{
+    printf("Node를 Insert 하려는 Index를 입력하시오 : ");
+    scanf("%d", idx);
+    CleanStdinBuffer();
+}

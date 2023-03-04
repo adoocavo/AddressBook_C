@@ -8,7 +8,12 @@ static inline void CleanStdinBuffer()
 {
     while(getchar() != '\n') {}
 }
-void InputInterface(char*, char**, const int);
+
+//1. strData 입력받는 인터페이스 함수
+void InputInterface_strData(char*, char**, const int);
+
+//2. index 입력받는 인터페이스 함수
+void InputInterface_index(int *);
 
 
 #endif //ADDRESSBOOK_C_USERINTERFACE_H
