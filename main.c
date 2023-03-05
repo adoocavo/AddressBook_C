@@ -1,8 +1,9 @@
 #include <stdio.h>
 //#include<stdlib.h>
 //#include<string.h>
-#include"Model/UserData.h"
+#include"Model/DS_DoubleLinkedList.h"
 #include"View/UserInterface.h"
+#include"Model/InputData.h"
 //#define N 6
 #define NUM_OF_STRING_ITEMS 2
 #define SIZE_OF_TEMP_BUFFER 100
@@ -14,9 +15,6 @@ int main()
     char aryTemp[SIZE_OF_TEMP_BUFFER] = {};
     char* aryBuffer[NUM_OF_STRING_ITEMS] = {};
     InitList();
-
-//    printf("%d\n", sizeof(aryTemp)/ sizeof(char));
-//    printf("%d\n", sizeof(aryTemp)/ sizeof(char*));
 
     while(1)
     {
@@ -31,14 +29,14 @@ int main()
             case 1:
                 //Data 입력받기 - InsertAtHead
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtHead(*aryBuffer, *(aryBuffer+1));
+                InsertAtHead(MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
 
             case 2:
                 //특정 Data 삭제하기 - DeleteNode
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                DeleteNode(SearchNode(*aryBuffer, *(aryBuffer+1)));
+                DeleteNode(SearchNode(MakeUserData(*aryBuffer, *(aryBuffer+1))));
                 break;
 
             case 3:
@@ -54,7 +52,7 @@ int main()
             case 5:
                 //Data 입력받기 - InsertAtTail
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtTail(*aryBuffer, *(aryBuffer+1));
+                InsertAtTail(MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             case 6:
@@ -69,7 +67,7 @@ int main()
                     InputInterface_index(&idx);
                     InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
 
-                    InsertAtIdx(idx, *aryBuffer, *(aryBuffer+1));
+                    InsertAtIdx(idx, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 }
 
             default:

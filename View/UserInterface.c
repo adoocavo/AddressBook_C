@@ -9,6 +9,7 @@
 //#include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
+//#include "../Model/UserData.h"
 
 //1. strData 입력받는 인터페이스 함수
 void InputInterface_strData(char* aryTemp, char* *aryBuffer, const int nSize)
@@ -39,3 +40,4 @@ void InputInterface_index(int *idx)
     scanf("%d", idx);
     CleanStdinBuffer();
 }
+
