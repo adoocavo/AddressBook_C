@@ -27,6 +27,8 @@ UserData * MakeUserData(const char *name, const char *phoneNumber)
 
     pUserData->name = (char*)malloc(nLength_name+1);
     pUserData->phoneNumber = (char*) malloc(nLength_phoneNumber+1);
+    pUserData->pfGetKey_name = GetKey_Name;
+    pUserData->pfGetKey_phoneNumber = GetKey_phoneNumber;
 
     strncpy(pUserData->name, name, nLength_name+1);
     strncpy(pUserData->phoneNumber, phoneNumber, nLength_phoneNumber+1);
@@ -43,13 +45,18 @@ const int DeleteUserData(UserData *pDelete)
         return ERROR;
     }
 
+    //삭제 대상 출력
+    printf("name : ");
+    puts(pDelete->name);
+
+    printf("phoneNumber : ");
+    puts(pDelete->phoneNumber);
+
+    //UserData의 member 중 동적할당 된 member들에 대해 free()
     free(pDelete->name);
     free(pDelete->phoneNumber);
-    pDelete->name = NULL;
-    pDelete->phoneNumber = NULL;
-
     free(pDelete);
-    pDelete = NULL;
+    pDelete = NULL;         //=> UserData의 member data가 모두 0으로 초기화됨
 
     return SUCCESS;
 }
@@ -80,7 +87,7 @@ const int SearchUserdata(UserData *pSearch, UserData *pUserData)
 //5. UserData 구조체의 member 중 name을 key로 사용하는 GetKey()
 //=> 즉, DS관련 소스파일에서 해당 함수를 포인팅하여 DS 구조체에 저장된
 // pUserData의 name, phoneNumber 정보에 접근할 수 있다
-const char* GetKey(UserData *pUserData)
+const char* GetKey_Name(UserData *pUserData)
 {
     if(pUserData == NULL)
     {
@@ -88,4 +95,17 @@ const char* GetKey(UserData *pUserData)
     }
 
     return pUserData->name;
+}
+
+//6. UserData 구조체의 member 중 phoneNumber를 key로 사용하는 GetKey()
+// => 해당 함수를 포인팅하는 변수를 선언하고,
+// 그 함수 포인터 변수를 통해 pUserData의 member data phoneNumber를 접근할 수 있다
+const char* GetKey_phoneNumber(UserData *pUserData)
+{
+    if(pUserData == NULL)
+    {
+        return NULL;
+    }
+
+    return pUserData->phoneNumber;
 }

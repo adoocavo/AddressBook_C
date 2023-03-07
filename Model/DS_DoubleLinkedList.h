@@ -19,9 +19,10 @@ typedef struct UserDataNode
 {
     //관리 대상 Data
     //=> UserData 구조체를 포인팅 해야 한다
+    //=> void*로 인한 사용의 어려움 --> C++에서 템플릿으로 해결 가능
     //struct UserData strData;
-    void *pUserData;
-
+    UserData *pUserData;
+/*
     //위의 관리 대상 Data에 대한 pointer 변수(위의 pUserData)를 param으로 하고,
     // 관리 대상 Data의 member 중 name을 retuern 하는
     // 관리 대상 Data의 맴버함수를 pointing 하는 함수 pointer 생성
@@ -29,7 +30,7 @@ typedef struct UserDataNode
     //=>List에 Insert 할 Node 생성시에 UserData class의
     //key return 함수(GetKey)로 초기화 해야함!
     const char* (*pGetKey)(void*);
-
+*/
     // 자료구조
     // Data 관리(구조) 체계이다 == Data 관리를 위한 포인터
     struct UserDataNode *pnNext;
@@ -54,7 +55,7 @@ const int InsertAtHead(UserData *);
 //2_1. Head 방향으로 새로운 Node Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertAtHead_UsingPf(void *, const char*(*)(void *));
+const int InsertAtHead_UsingPf(void *);
 
 //3. Tail 방향으로 새로운 Node Insert
 const int InsertAtTail(UserData *);
@@ -62,7 +63,7 @@ const int InsertAtTail(UserData *);
 //3_1 Tail 방향으로 새로운 Node Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertAtTail_UsingPf(void *, const char*(*)(void *));
+const int InsertAtTail_UsingPf(void *);
 
 //4. 모든 Node 할당해제(삭제) 함수
 const int ReleaseList();
@@ -78,6 +79,9 @@ UserDataNode* SearchNode(UserData *);
 
 //6_1. 특정 Node를 key(이름)으로 검색하는 함수
 UserDataNode* SearchNode_UsingKey(const char*);
+
+//6_2 특정 Node 검색 함수 by Using Getter
+
 
 //7. List내 Node 개수 리턴(Head/Tail Dummy 제외)
 static inline const int GetSize()
@@ -113,7 +117,7 @@ const int InsertAtIdx(const int, UserData *);
 //10_1. 특정 index에 Node 삽입
 //=> UserData * --> void *
 //=> 함수 포인터 param으로 받기 --> for Insert
-const int InsertAtIdx_UsingPf(const int, void *,  const char * (*)(void *));
+const int InsertAtIdx_UsingPf(const int, void *);
 
 
 //11. 특정 index의 Node 검색 + 주소 리턴
@@ -125,9 +129,11 @@ const int InsertBefore(UserDataNode *curNode, UserData *);
 //12_1. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertBefore_UsingPf(UserDataNode *, void *,
-                               const char * (*)(void *));
+const int InsertBefore_UsingPf(UserDataNode *, void *);
 
+//13. 동적할당을 통한 특정 Node 생성
+// => 이미 생성된 관리대상 Data 구조체에 대한 포인터를 param으로 받음
+UserDataNode * CreateNewNode(void *);
 
 
 

@@ -14,6 +14,12 @@ typedef struct UserData
     //관리될 Data
     char *name;
     char *phoneNumber;
+
+    //UserData 구조체의 member name 혹은 phoneNumber를 key로 사용할 때
+    //해당 key값을 리턴하는 함수에 대한 함수 포인터 member 변수
+    const char* (*pfGetKey_name)(struct UserData*);
+    const char* (*pfGetKey_phoneNumber)(struct UserData*);
+
 } UserData;
 
 //1. 입력받은 Data에 대해 UserData 구조체 동적할당 후 Insert/Delete
@@ -38,10 +44,29 @@ static inline void PrintUserData(UserData *pUserData)
 }
 
 //5. UserData 구조체의 member 중 name을 key로 사용하는 GetKey()
-//=> 즉, DS관련 소스파일에서 해당 함수를 포인팅하여 DS 구조체에 저장된
-// pUserData의 name, phoneNumber 정보에 접근할 수 있다
-const char* GetKey(UserData *);
+// => 해당 함수를 포인팅하는 변수를 선언하고,
+// 그 함수 포인터 변수를 통해 pUserData의 member data name에 접근할 수 있다
+const char* GetKey_Name(UserData *);
 
+//6. UserData 구조체의 member 중 phoneNumber를 key로 사용하는 GetKey()
+// => 해당 함수를 포인팅하는 변수를 선언하고,
+// 그 함수 포인터 변수를 통해 pUserData의 member data phoneNumber를 접근할 수 있다
+const char* GetKey_phoneNumber(UserData *);
+
+/*
+//7.
+static inline UserData * TypeOfUserData(void *pUserData)
+{
+    if(pUserData == NULL)
+    {
+        return NULL;
+    }
+
+    UserData *pCastUserData = (UserData *)pUserData;
+
+    return pCastUserData;
+}
+*/
 
 //+) param 유효성 검사
 static inline const int CheckParam(const char *name, const char *phoneNumber)

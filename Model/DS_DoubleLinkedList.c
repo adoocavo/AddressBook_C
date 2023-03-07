@@ -44,10 +44,12 @@ const int InsertAtHead(UserData *pParam)
 }
 
 //2_1. Head 방향으로 새로운 Node Insert
+//=> 새롭게 입력받은 (관리대상 Data애 저장된) 관리대상 Data에 대한 ptr을 param으로 받음
+//  --> 입력받은 Data를 저장하는 Node 생성 + Head Dummy pnNext에 Insert
 //=> UserData (class)와의 의존성 없앤 함수
-const int InsertAtHead_UsingPf(void *pUserData, const char*(*pfParam)(void *))
+const int InsertAtHead_UsingPf(void *pUserData)
 {
-    const int nResult = InsertBefore_UsingPf(g_pHead->pnNext, pUserData, pfParam);
+    const int nResult = InsertBefore_UsingPf(g_pHead->pnNext, pUserData);
 
     if(nResult == ERROR)
     {
@@ -68,11 +70,12 @@ const int InsertAtTail(UserData *pParam)
 }
 
 //3_1 Tail 방향으로 새로운 Node Insert
-//=> GetKey에 대한 함수 포인터 member를 사용하여
-// UserData (class)와의 의존성 없앤 함수
-const int InsertAtTail_UsingPf(void *pUserData, const char*(*pfParam)(void *))
+//=> 새롭게 입력받은 (관리대상 Data애 저장된) 관리대상 Data에 대한 ptr을 param으로 받음
+//  --> 입력받은 Data를 저장하는 Node 생성 + Tail Dummy pnPrev에 Insert
+//=> UserData (class)와의 의존성 없앤 함수
+const int InsertAtTail_UsingPf(void *pUserData)
 {
-    const int nResult = InsertBefore_UsingPf(g_pTail, pUserData, pfParam);
+    const int nResult = InsertBefore_UsingPf(g_pTail, pUserData);
 
     if(nResult == ERROR)
     {
@@ -125,9 +128,8 @@ const int DeleteNode(UserDataNode* pDelete)
     pDelete->pnPrev->pnNext = pDelete->pnNext;
     pDelete->pnNext->pnPrev = pDelete->pnPrev;
 
-    //삭제 대상 출력 --> 대상자료 소스파일로 이동
+    //삭제 대상 출력
     printf("Delete : prev[%p] [%p], next[%p]\n", pDelete->pnPrev, pDelete, pDelete->pnNext);
-    PrintUserData(pDelete->pUserData);
 
     /*
     printf("Delete : [%p] %s, next[%p]\n", pDelete,
@@ -174,12 +176,20 @@ const int DeleteNode_UsingKey(const char *name)
     pDelete->pnPrev->pnNext = pDelete->pnNext;
     pDelete->pnNext->pnPrev = pDelete->pnPrev;
 
+    //삭제 대상 출력
+    printf("Delete : prev[%p] [%p], next[%p]\n", pDelete->pnPrev, pDelete, pDelete->pnNext);
+
     //삭제 대상 Node 삭제
+    //1. Data 저장된 포인터 삭제
+    //C++ 로 제작시에는 Data class의 소멸자에 동적 할당 해제 code 작성하기
+    /*
     //=> C++사용하면 그냥 friend 선언으로 접근하는 방법도 있을탠데..
     // 그냥 UserData class의 Delete 함수 사용
     //  UserData class의 해당 DeleteUserData 내용만 바뀌는거면 의존성 상관 없지 않나?
+*/
     DeleteUserData(pDelete->pUserData);
 
+    //2. Node 자체 동적할당 해제
     free(pDelete);
     pDelete = NULL;
 
@@ -226,9 +236,9 @@ UserDataNode* SearchNode_UsingKey(const char *name)
 
     while(pSearch != g_pTail)
     {
-        if(strncmp((pSearch->pGetKey)(pSearch->pUserData),
+        if(strncmp((pSearch->pUserData->pfGetKey_name)(pSearch->pUserData),
                    name,
-                   strlen(pSearch->pGetKey(pSearch->pUserData))) == 0)
+                   strlen((pSearch->pUserData->pfGetKey_name)(pSearch->pUserData))) == 0)
         {
             return pSearch;
         }
@@ -238,6 +248,8 @@ UserDataNode* SearchNode_UsingKey(const char *name)
 
     return NULL;
 }
+
+//6_2 특정 Node 검색 함수 by Using Getter
 
 
 
@@ -252,13 +264,18 @@ void PrintAllList()
 //    char const *pName = ((UserData*)(pPrint->pUserData))->name;
 //    char const *pPhoneNumber = ((UserData*)(pPrint->pUserData))->phoneNumber;
 
-
+    //Node의 Data 출력
+    //by Using getter()
     while(pPrint != g_pTail)
     {
         printf("prev[%p] [%p], next[%p]\n", pPrint->pnPrev, pPrint, pPrint->pnNext);
-        PrintUserData(pPrint->pUserData);
-        //=> pPrint->pGetKey(pUserData); 로 출력도 가능
+        printf("name : ");
+        puts(pPrint->pUserData->pfGetKey_name(pPrint->pUserData));
 
+        printf("phoneNumber : ");
+        puts(pPrint->pUserData->pfGetKey_phoneNumber(pPrint->pUserData));
+        //PrintUserData(pPrint->pUserData);
+        //=> pPrint->pGetKey(pUserData); 로 출력도 가능
 
         pPrint = pPrint->pnNext;
     }
@@ -296,8 +313,7 @@ const int InsertAtIdx(const int idx, UserData *pParam)
 
 //10_1. 특정 index에 Node 삽입
 //=> UserData * --> void *
-const int InsertAtIdx_UsingPf(const int idx, void *pParam,
-                              const char * (*pfParam)(void *))
+const int InsertAtIdx_UsingPf(const int idx, void *pUserData)
 {
     //입력받은 index < 0 --> ERROR
     if(idx < 0)
@@ -312,13 +328,13 @@ const int InsertAtIdx_UsingPf(const int idx, void *pParam,
         //삽입하려는 Index의 현재 Node
         UserDataNode *pCurNode = GetNodeAtIdx(idx);
         //pCurNode의 Head 방향에 입력받은 Data 저장한 새로운 Node Insert
-        return InsertBefore_UsingPf(pCurNode, pParam, pfParam);
+        return InsertBefore_UsingPf(pCurNode, pUserData);
     }
 
         //=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
     else
     {
-        return InsertAtTail_UsingPf(pParam, pfParam);
+        return InsertAtTail_UsingPf(pUserData);
     }
 }
 
@@ -362,16 +378,14 @@ const int InsertBefore(UserDataNode *pCurNode, UserData *pParam)
 }
 
 //12_1. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
-//=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertBefore_UsingPf(UserDataNode *pCurNode, void *pParam,
-                               const char * (*pfParam)(void *))
+const int InsertBefore_UsingPf(UserDataNode *pCurNode, void *pUserData)
 {
-    if(pCurNode == NULL || pParam == NULL || pfParam == NULL)
+    if(pCurNode == NULL || pUserData == NULL)
     {
         return ERROR;
     }
-
+/*
     //pCurNode 위치에 삽입하려는 새로운 Node
     //+ pUserData, pGetKey member 초기화
     UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
@@ -379,34 +393,27 @@ const int InsertBefore_UsingPf(UserDataNode *pCurNode, void *pParam,
 
     //1. 관리 대상 자료애 대한 초기화
     pNode->pUserData = pParam;
-    pNode->pGetKey = pfParam;
+ */
+    //1. pCurNode 위치에 삽입하려는 새로운 Node 생성 후 Data 초기화
+    UserDataNode *pNewNode = CreateNewNode(pUserData);
 
     //2. pCurNode의 Head 방향에 pNode Insert
-    pNode->pnNext = pCurNode;
-    pNode->pnPrev = pCurNode->pnPrev;
+    pNewNode->pnNext = pCurNode;
+    pNewNode->pnPrev = pCurNode->pnPrev;
 
     //순서주의 : pCurNode->pnPrev 수정 전에 pCurNode->pnPrev->pnNext에 접근
-    pCurNode->pnPrev->pnNext = pNode;
-    pCurNode->pnPrev = pNode;
+    pCurNode->pnPrev->pnNext = pNewNode;
+    pCurNode->pnPrev = pNewNode;
 
     //Insert/Delete 후 반드시 전역 Node counting 변수 수정
     ++g_nNodeCount;
     return SUCCESS;
-
 }
 
-/*
-//+) 리스트 비어있는지 확인
-const int IsEmpty()
+
+//13. 동적할당을 통한 특정 Node 생성
+// => 이미 생성된 관리대상 Data 구조체에 대한 포인터를 param으로 받음
+UserDataNode * CreateNewNode(void *pUserData)
 {
-    if(g_pHead->pnNext == g_pTail
-    && g_pTail->pnPrev == g_pHead)
-    {
-        printf("Empty List\n");
-        return YES;
-    }
-
-    return NO;
-}
-*/
-
+    UserDataNode *pNewNode = (UserDataNode *)malloc(sizeof(UserDataNode));
+    memset(pNewNode, 0, sizeof(*pNewNode));ㄴ

@@ -82,8 +82,7 @@ int main()
             case 9:
                 //입력받은 Data Head뒤에 Node 생성 후Insert
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtHead_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)),
-                                     GetKey);
+                InsertAtHead_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             case 10:
@@ -94,15 +93,14 @@ int main()
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
 
                 InsertAtIdx_UsingPf(idx,
-                                    MakeUserData(*aryBuffer, *(aryBuffer+1)),
-                                    GetKey);
+                                    MakeUserData(*aryBuffer, *(aryBuffer+1)));
             }
             break;
 
             case 11:
                 //입력받은 Data Tail 앞에 Node 생성 후Insert
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtTail_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)), GetKey);
+                InsertAtTail_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             default:
