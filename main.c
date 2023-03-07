@@ -69,6 +69,41 @@ int main()
 
                     InsertAtIdx(idx, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 }
+                break;
+
+        ///////////////////Data와의 의존성 없앤 DS class의 함수 사용
+
+            case 8:
+                //특정 Node에 대해 name으로 검색해서 삭제
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
+                DeleteNode_UsingKey(*aryBuffer);
+                break;
+
+            case 9:
+                //입력받은 Data Head뒤에 Node 생성 후Insert
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
+                InsertAtHead_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)),
+                                     GetKey);
+                break;
+
+            case 10:
+            //특정 Index에 Node Insert
+            {
+                int idx;
+                InputInterface_index(&idx);
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
+
+                InsertAtIdx_UsingPf(idx,
+                                    MakeUserData(*aryBuffer, *(aryBuffer+1)),
+                                    GetKey);
+            }
+            break;
+
+            case 11:
+                //입력받은 Data Tail 앞에 Node 생성 후Insert
+                InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
+                InsertAtTail_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)), GetKey);
+                break;
 
             default:
                 break;

@@ -22,6 +22,14 @@ typedef struct UserDataNode
     //struct UserData strData;
     void *pUserData;
 
+    //위의 관리 대상 Data에 대한 pointer 변수(위의 pUserData)를 param으로 하고,
+    // 관리 대상 Data의 member 중 name을 retuern 하는
+    // 관리 대상 Data의 맴버함수를 pointing 하는 함수 pointer 생성
+    //=> InputData.c의 GetKey() 함수를 가리켜야 함
+    //=>List에 Insert 할 Node 생성시에 UserData class의
+    //key return 함수(GetKey)로 초기화 해야함!
+    const char* (*pGetKey)(void*);
+
     // 자료구조
     // Data 관리(구조) 체계이다 == Data 관리를 위한 포인터
     struct UserDataNode *pnNext;
@@ -43,8 +51,18 @@ void InitList();
 //2. Head 방향으로 새로운 Node Insert
 const int InsertAtHead(UserData *);
 
+//2_1. Head 방향으로 새로운 Node Insert
+//=> GetKey에 대한 함수 포인터 member를 사용하여
+// UserData (class)와의 의존성 없앤 함수
+const int InsertAtHead_UsingPf(void *, const char*(*)(void *));
+
 //3. Tail 방향으로 새로운 Node Insert
 const int InsertAtTail(UserData *);
+
+//3_1 Tail 방향으로 새로운 Node Insert
+//=> GetKey에 대한 함수 포인터 member를 사용하여
+// UserData (class)와의 의존성 없앤 함수
+const int InsertAtTail_UsingPf(void *, const char*(*)(void *));
 
 //4. 모든 Node 할당해제(삭제) 함수
 const int ReleaseList();
@@ -52,8 +70,14 @@ const int ReleaseList();
 //5. 특정 Node 삭제 함수
 const int DeleteNode(UserDataNode*);
 
+//5_1. 특정 Key를 갖는 Node를 삭제하는 함수
+const int DeleteNode_UsingKey(const char*);
+
 //6. 특정 Node 검색 함수
 UserDataNode* SearchNode(UserData *);
+
+//6_1. 특정 Node를 key(이름)으로 검색하는 함수
+UserDataNode* SearchNode_UsingKey(const char*);
 
 //7. List내 Node 개수 리턴(Head/Tail Dummy 제외)
 static inline const int GetSize()
@@ -85,11 +109,27 @@ static inline void DeInitList()
 //=> 입력받은 index < 0 --> ERROR
 const int InsertAtIdx(const int, UserData *);
 
+
+//10_1. 특정 index에 Node 삽입
+//=> UserData * --> void *
+//=> 함수 포인터 param으로 받기 --> for Insert
+const int InsertAtIdx_UsingPf(const int, void *,  const char * (*)(void *));
+
+
 //11. 특정 index의 Node 검색 + 주소 리턴
 UserDataNode * GetNodeAtIdx(const int);
 
 //12. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
 const int InsertBefore(UserDataNode *curNode, UserData *);
+
+//12_1. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
+//=> GetKey에 대한 함수 포인터 member를 사용하여
+// UserData (class)와의 의존성 없앤 함수
+const int InsertBefore_UsingPf(UserDataNode *, void *,
+                               const char * (*)(void *));
+
+
+
 
 /* => 해당 Index에 새로운 Node를 넣으면 기존 Node는 Tail 방향으로 밀어져야 함
 //12. 특정 Node의 Head 방향으로 새로운 Node Insert

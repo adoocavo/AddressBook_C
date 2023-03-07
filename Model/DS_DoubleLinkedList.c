@@ -43,12 +43,48 @@ const int InsertAtHead(UserData *pParam)
     return InsertBefore(g_pHead->pnNext, pParam);
 }
 
+//2_1. Head 방향으로 새로운 Node Insert
+//=> UserData (class)와의 의존성 없앤 함수
+const int InsertAtHead_UsingPf(void *pUserData, const char*(*pfParam)(void *))
+{
+    const int nResult = InsertBefore_UsingPf(g_pHead->pnNext, pUserData, pfParam);
+
+    if(nResult == ERROR)
+    {
+        return FAIL;
+    }
+
+    else
+    {
+        return nResult;
+    }
+}
+
 
 //3. Tail 방향으로 새로운 Node Insert
 const int InsertAtTail(UserData *pParam)
 {
     return InsertBefore(g_pTail, pParam);
 }
+
+//3_1 Tail 방향으로 새로운 Node Insert
+//=> GetKey에 대한 함수 포인터 member를 사용하여
+// UserData (class)와의 의존성 없앤 함수
+const int InsertAtTail_UsingPf(void *pUserData, const char*(*pfParam)(void *))
+{
+    const int nResult = InsertBefore_UsingPf(g_pTail, pUserData, pfParam);
+
+    if(nResult == ERROR)
+    {
+        return FAIL;
+    }
+
+    else
+    {
+        return nResult;
+    }
+}
+
 
 //4. 모든 Node 할당해제(삭제) 함수
 const int ReleaseList()
@@ -123,6 +159,35 @@ const int DeleteNode(UserDataNode* pDelete)
     return SUCCESS;
 }
 
+//5_1. 특정 Key를 갖는 Node를 삭제하는 함수
+const int DeleteNode_UsingKey(const char *name)
+{
+    UserDataNode *pDelete = SearchNode_UsingKey(name);
+
+    //검색 결과에 대한 유효성 검사
+    if(pDelete == NULL)
+    {
+        return FAIL;            // 해당 함수 사용자가 FAIL 리턴에 대한 처리 고려
+    }
+
+    //삭제 대상 Node의 앞/뒤 연결
+    pDelete->pnPrev->pnNext = pDelete->pnNext;
+    pDelete->pnNext->pnPrev = pDelete->pnPrev;
+
+    //삭제 대상 Node 삭제
+    //=> C++사용하면 그냥 friend 선언으로 접근하는 방법도 있을탠데..
+    // 그냥 UserData class의 Delete 함수 사용
+    //  UserData class의 해당 DeleteUserData 내용만 바뀌는거면 의존성 상관 없지 않나?
+    DeleteUserData(pDelete->pUserData);
+
+    free(pDelete);
+    pDelete = NULL;
+
+ //   free((pDelete->pGetKey)(pDelete->pUserData));         //=> const *는 경고??
+    --g_nNodeCount;
+    return SUCCESS;
+}
+
 //6. 특정 Node 검색 함수
 //=> Head -> Tail 방향으로 검색
 UserDataNode* SearchNode(UserData *pParam)
@@ -143,6 +208,40 @@ UserDataNode* SearchNode(UserData *pParam)
     return NULL;
 }
 
+//6_1. 특정 Node를 key(이름)으로 검색하는 함수
+UserDataNode* SearchNode_UsingKey(const char *name)
+{
+    if(name == NULL)
+    {
+        return NULL;
+    }
+
+    //검색 대상 Node
+    /*
+    UserDataNode *pSearch = (UserDataNode*)malloc(sizeof(UserDataNode));
+    memset(pSearch, 0, sizeof(*pSearch));
+    */
+    //UserDataNode *pSearch = g_pTail->pnNext;
+    UserDataNode *pSearch = g_pHead->pnNext;
+
+    while(pSearch != g_pTail)
+    {
+        if(strncmp((pSearch->pGetKey)(pSearch->pUserData),
+                   name,
+                   strlen(pSearch->pGetKey(pSearch->pUserData))) == 0)
+        {
+            return pSearch;
+        }
+
+        pSearch = pSearch->pnNext;
+    }
+
+    return NULL;
+}
+
+
+
+
 //8. 전체 List 출력 함수
 //Head -> Tail 방향으로
 void PrintAllList()
@@ -158,6 +257,8 @@ void PrintAllList()
     {
         printf("prev[%p] [%p], next[%p]\n", pPrint->pnPrev, pPrint, pPrint->pnNext);
         PrintUserData(pPrint->pUserData);
+        //=> pPrint->pGetKey(pUserData); 로 출력도 가능
+
 
         pPrint = pPrint->pnNext;
     }
@@ -189,6 +290,35 @@ const int InsertAtIdx(const int idx, UserData *pParam)
     else
     {
         return InsertAtTail(pParam);
+    }
+}
+
+
+//10_1. 특정 index에 Node 삽입
+//=> UserData * --> void *
+const int InsertAtIdx_UsingPf(const int idx, void *pParam,
+                              const char * (*pfParam)(void *))
+{
+    //입력받은 index < 0 --> ERROR
+    if(idx < 0)
+    {
+        return ERROR;
+    }
+
+        //=> 입력받은 index < nNodeCount && 입력받은 index >= 0 --> 해당 index에 위치한 Node의 Head 방향에 Insert
+        //=> index가 존재하는 범위 내에서만 loop돌게 만듦
+    else if(idx>=0 && idx < g_nNodeCount)
+    {
+        //삽입하려는 Index의 현재 Node
+        UserDataNode *pCurNode = GetNodeAtIdx(idx);
+        //pCurNode의 Head 방향에 입력받은 Data 저장한 새로운 Node Insert
+        return InsertBefore_UsingPf(pCurNode, pParam, pfParam);
+    }
+
+        //=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
+    else
+    {
+        return InsertAtTail_UsingPf(pParam, pfParam);
     }
 }
 
@@ -229,6 +359,40 @@ const int InsertBefore(UserDataNode *pCurNode, UserData *pParam)
     //Insert/Delete 후 반드시 전역 Node counting 변수 수정
     ++g_nNodeCount;
     return SUCCESS;
+}
+
+//12_1. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
+//=> GetKey에 대한 함수 포인터 member를 사용하여
+// UserData (class)와의 의존성 없앤 함수
+const int InsertBefore_UsingPf(UserDataNode *pCurNode, void *pParam,
+                               const char * (*pfParam)(void *))
+{
+    if(pCurNode == NULL || pParam == NULL || pfParam == NULL)
+    {
+        return ERROR;
+    }
+
+    //pCurNode 위치에 삽입하려는 새로운 Node
+    //+ pUserData, pGetKey member 초기화
+    UserDataNode *pNode = (UserDataNode*)malloc(sizeof(UserDataNode));
+    memset(pNode, 0, sizeof(UserDataNode));
+
+    //1. 관리 대상 자료애 대한 초기화
+    pNode->pUserData = pParam;
+    pNode->pGetKey = pfParam;
+
+    //2. pCurNode의 Head 방향에 pNode Insert
+    pNode->pnNext = pCurNode;
+    pNode->pnPrev = pCurNode->pnPrev;
+
+    //순서주의 : pCurNode->pnPrev 수정 전에 pCurNode->pnPrev->pnNext에 접근
+    pCurNode->pnPrev->pnNext = pNode;
+    pCurNode->pnPrev = pNode;
+
+    //Insert/Delete 후 반드시 전역 Node counting 변수 수정
+    ++g_nNodeCount;
+    return SUCCESS;
+
 }
 
 /*

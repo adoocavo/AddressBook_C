@@ -10,6 +10,7 @@
 //함수에 Param으로 넘기기 --> 자료구조 - 자료 간 분리
 //=> 해당 함수의 caller 측에서 해당 함수의 리턴 주소를,
 // 새롭게 생성하는 UserdataNode type Node의 pUserData 맴버가 가리키도록 제작하기
+//=> 입력되는 Data의 type에 의존적
 UserData * MakeUserData(const char *name, const char *phoneNumber)
 {
     if(CheckParam(name, phoneNumber) == 0)
@@ -76,3 +77,15 @@ const int SearchUserdata(UserData *pSearch, UserData *pUserData)
     return FAIL;
 }
 
+//5. UserData 구조체의 member 중 name을 key로 사용하는 GetKey()
+//=> 즉, DS관련 소스파일에서 해당 함수를 포인팅하여 DS 구조체에 저장된
+// pUserData의 name, phoneNumber 정보에 접근할 수 있다
+const char* GetKey(UserData *pUserData)
+{
+    if(pUserData == NULL)
+    {
+        return NULL;
+    }
+
+    return pUserData->name;
+}

@@ -37,6 +37,10 @@ static inline void PrintUserData(UserData *pUserData)
     puts(pUserData->phoneNumber);
 }
 
+//5. UserData 구조체의 member 중 name을 key로 사용하는 GetKey()
+//=> 즉, DS관련 소스파일에서 해당 함수를 포인팅하여 DS 구조체에 저장된
+// pUserData의 name, phoneNumber 정보에 접근할 수 있다
+const char* GetKey(UserData *);
 
 
 //+) param 유효성 검사
