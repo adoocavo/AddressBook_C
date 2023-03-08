@@ -39,69 +39,79 @@ typedef struct UserDataNode
 
 //자료구조-2
 //전체 연결 리스트 관리하는 포인터 변수
-UserDataNode *g_pHead;          //Head Node를 가리키는 포인터
-UserDataNode *g_pTail;          //Tail Node를 가리키는 포인터
-int g_nNodeCount;                 //Node 개수 counting 변수
+//=> 전역변수 -> 구조체로 만들기
+//=> C++에선 이게 DS class가 돤더
+//  --> 해당 class의 member function으로 Data Utilize func 제작
+//  --> this pointer 역할
+typedef struct CMyList
+{
+    UserDataNode *g_pHead;          //Head Node를 가리키는 포인터
+    UserDataNode *g_pTail;          //Tail Node를 가리키는 포인터
+    int g_nNodeCount;                 //Node 개수 counting 변수
+} CMyList;
+
 
 
 //////////////////////Double Linked List////////////////////
+
+//////////////////CMyList class/////////
 //1. 모든 Node 초기화 함수
 //=> 필요한가??
-void InitList();
+void InitList(CMyList*);
 
 //2. Head 방향으로 새로운 Node Insert
-const int InsertAtHead(UserData *);
+const int InsertAtHead(CMyList*, UserData *);
 
 //2_1. Head 방향으로 새로운 Node Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertAtHead_UsingPf(void *);
+const int InsertAtHead_UsingPf(CMyList *, void *);
 
 //3. Tail 방향으로 새로운 Node Insert
-const int InsertAtTail(UserData *);
+const int InsertAtTail(CMyList *, UserData *);
 
 //3_1 Tail 방향으로 새로운 Node Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertAtTail_UsingPf(void *);
+const int InsertAtTail_UsingPf(CMyList *, void *);
 
 //4. 모든 Node 할당해제(삭제) 함수
-const int ReleaseList();
+const int ReleaseList(CMyList *);
 
 //5. 특정 Node 삭제 함수
-const int DeleteNode(UserDataNode*);
+const int DeleteNode(CMyList *, UserDataNode*);
 
 //5_1. 특정 Key를 갖는 Node를 삭제하는 함수
-const int DeleteNode_UsingKey(const char*);
+const int DeleteNode_UsingKey(CMyList *, const char*);
 
 //6. 특정 Node 검색 함수
-UserDataNode* SearchNode(UserData *);
+UserDataNode* SearchNode(CMyList *, UserData *);
 
 //6_1. 특정 Node를 key(이름)으로 검색하는 함수
-UserDataNode* SearchNode_UsingKey(const char*);
+UserDataNode* SearchNode_UsingKey(CMyList *, const char*);
 
 //6_2 특정 Node 검색 함수 by Using Getter
 
 
 //7. List내 Node 개수 리턴(Head/Tail Dummy 제외)
-static inline const int GetSize()
+static inline const int GetSize(CMyList *pListData)
 {
-    return g_nNodeCount;
+    return pListData->g_nNodeCount;
 }
 
 //8. 전체 List 출력 함수
-void PrintAllList();
+void PrintAllList(CMyList *);
 
 //9. 초기화 리셋 함수
-static inline void DeInitList()
+static inline void DeInitList(CMyList *pListData)
 {
-    free(g_pHead);
-    free(g_pTail);
+    free(pListData->g_pHead);
+    free(pListData->g_pTail);
 
-    g_pHead = NULL;
-    g_pTail = NULL;
+    pListData->g_pHead = NULL;
+    pListData->g_pTail = NULL;
 
-    g_nNodeCount = 0;
+    pListData->g_nNodeCount = 0;
 
     printf("DeInitList\n");
 
@@ -111,28 +121,34 @@ static inline void DeInitList()
 //=> 입력받은 index >= nNodeCount  --> 마지막 Node에 append
 //=> 입력받은 index < nNodeCount && 입력받은 index >= 0 --> 해당 index에 위치한 Node의 Head 방향에 Insert
 //=> 입력받은 index < 0 --> ERROR
-const int InsertAtIdx(const int, UserData *);
+const int InsertAtIdx(CMyList *, const int, UserData *);
 
 
 //10_1. 특정 index에 Node 삽입
 //=> UserData * --> void *
 //=> 함수 포인터 param으로 받기 --> for Insert
-const int InsertAtIdx_UsingPf(const int, void *);
+const int InsertAtIdx_UsingPf(CMyList *, const int, void *);
 
 
 //11. 특정 index의 Node 검색 + 주소 리턴
-UserDataNode * GetNodeAtIdx(const int);
+UserDataNode * GetNodeAtIdx(CMyList *, const int);
 
 //12. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
-const int InsertBefore(UserDataNode *curNode, UserData *);
+const int InsertBefore(CMyList *, UserDataNode *curNode, UserData *);
 
 //12_1. 특정 Node의 Head 방향(before)에 새로운 Node 생성 + Insert
 //=> GetKey에 대한 함수 포인터 member를 사용하여
 // UserData (class)와의 의존성 없앤 함수
-const int InsertBefore_UsingPf(UserDataNode *, void *);
+const int InsertBefore_UsingPf(CMyList *, UserDataNode *, void *);
+
+
+
+/////////////////////////Node clas/////////////
 
 //13. 동적할당을 통한 특정 Node 생성
 // => 이미 생성된 관리대상 Data 구조체에 대한 포인터를 param으로 받음
+// => C++에서 CMyList (DS) class 의 member func가 아닌
+//    Node class의 생성자가 된다
 UserDataNode * CreateNewNode(void *);
 
 

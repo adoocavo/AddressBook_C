@@ -14,7 +14,8 @@ int main()
     //FILE* const fp = stdin;
     char aryTemp[SIZE_OF_TEMP_BUFFER] = {};
     char* aryBuffer[NUM_OF_STRING_ITEMS] = {};
-    InitList();
+    CMyList DoubleLinkedList = {};
+    InitList(&DoubleLinkedList);
 
     while(1)
     {
@@ -29,35 +30,35 @@ int main()
             case 1:
                 //Data 입력받기 - InsertAtHead
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtHead(MakeUserData(*aryBuffer, *(aryBuffer+1)));
+                InsertAtHead(&DoubleLinkedList, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
 
             case 2:
                 //특정 Data 삭제하기 - DeleteNode
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                DeleteNode(SearchNode(MakeUserData(*aryBuffer, *(aryBuffer+1))));
+                DeleteNode(&DoubleLinkedList, SearchNode(&DoubleLinkedList, MakeUserData(*aryBuffer, *(aryBuffer+1))));
                 break;
 
             case 3:
                 //전채 List 삭제하기 - ReleaseAllList
-                ReleaseList();
+                ReleaseList(&DoubleLinkedList);
                 break;
 
             case 4:
                 //전체 List 출력하기
-                PrintAllList();
+                PrintAllList(&DoubleLinkedList);
                 break;
 
             case 5:
                 //Data 입력받기 - InsertAtTail
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtTail(MakeUserData(*aryBuffer, *(aryBuffer+1)));
+                InsertAtTail(&DoubleLinkedList, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             case 6:
                 //전체 Node 개수 출력
-                printf("전체 Node 개수(Head/Tail)제외 : %d\n", GetSize());
+                printf("전체 Node 개수(Head/Tail)제외 : %d\n", GetSize(&DoubleLinkedList));
                 break;
 
             case 7:
@@ -67,7 +68,7 @@ int main()
                     InputInterface_index(&idx);
                     InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
 
-                    InsertAtIdx(idx, MakeUserData(*aryBuffer, *(aryBuffer+1)));
+                    InsertAtIdx(&DoubleLinkedList, idx, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 }
                 break;
 
@@ -76,13 +77,13 @@ int main()
             case 8:
                 //특정 Node에 대해 name으로 검색해서 삭제
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                DeleteNode_UsingKey(*aryBuffer);
+                DeleteNode_UsingKey(&DoubleLinkedList, *aryBuffer);
                 break;
 
             case 9:
                 //입력받은 Data Head뒤에 Node 생성 후Insert
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtHead_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)));
+                InsertAtHead_UsingPf(&DoubleLinkedList, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             case 10:
@@ -92,7 +93,7 @@ int main()
                 InputInterface_index(&idx);
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
 
-                InsertAtIdx_UsingPf(idx,
+                InsertAtIdx_UsingPf(&DoubleLinkedList, idx,
                                     MakeUserData(*aryBuffer, *(aryBuffer+1)));
             }
             break;
@@ -100,7 +101,7 @@ int main()
             case 11:
                 //입력받은 Data Tail 앞에 Node 생성 후Insert
                 InputInterface_strData(aryTemp, aryBuffer, sizeof(aryTemp));
-                InsertAtTail_UsingPf(MakeUserData(*aryBuffer, *(aryBuffer+1)));
+                InsertAtTail_UsingPf(&DoubleLinkedList, MakeUserData(*aryBuffer, *(aryBuffer+1)));
                 break;
 
             default:
@@ -109,5 +110,5 @@ int main()
         }
     }
 
-    DeInitList();
+    DeInitList(&DoubleLinkedList);
 }
